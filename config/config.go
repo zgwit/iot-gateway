@@ -7,20 +7,14 @@ import (
 	"os"
 )
 
-func Existing() bool {
-	return existing
-}
-
-var existing = false
-
 // Configure 配置
 type Configure struct {
-	Node            string   `yaml:"node" json:"node"`
-	Data            string   `yaml:"data" json:"data"`
-	DefaultPassword string   `yaml:"default_password" json:"default_password"`
-	MQTT            MQTT     `yaml:"mqtt" json:"mqtt"`
-	Log             Log      `yaml:"log" json:"log"`
-	//Serials  []string `yaml:"serials" json:"serials"`
+	Node     string   `yaml:"node" json:"node"`
+	Data     string   `yaml:"data" json:"data"`
+	Database Database `yaml:"database" json:"database"`
+	Master   MQTT     `yaml:"master" json:"master"`
+	MQTT     MQTT     `yaml:"mqtt" json:"mqtt"`
+	Log      Log      `yaml:"log" json:"log"`
 }
 
 // Config 全局配置
@@ -28,7 +22,8 @@ var Config = Configure{
 	Node:     "root",
 	Data:     "data",
 	Database: DatabaseDefault,
-	MQTT:            MQTTDefault,
+	Master:   MQTTDefault,
+	MQTT:     MQTTDefault,
 	Log:      LogDefault,
 }
 
