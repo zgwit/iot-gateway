@@ -12,7 +12,7 @@ type Server interface {
 
 	Open() error
 	Close() error
-	GetTunnel(id int64) Tunnel
+	GetTunnel(id uint64) link.Tunnel
 	Running() bool
 }
 

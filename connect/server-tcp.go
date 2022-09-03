@@ -15,7 +15,7 @@ type ServerTCP struct {
 
 	server *model.Server
 
-	children map[int64]*ServerTcpTunnel
+	children map[uint64]*ServerTcpTunnel
 
 	listener *net.TCPListener
 
@@ -25,7 +25,7 @@ type ServerTCP struct {
 func newServerTCP(server *model.Server) *ServerTCP {
 	svr := &ServerTCP{
 		server:   server,
-		children: make(map[int64]*ServerTcpTunnel),
+		children: make(map[uint64]*ServerTcpTunnel),
 	}
 	return svr
 }
@@ -49,7 +49,7 @@ func (server *ServerTCP) Open() error {
 	server.running = true
 	go func() {
 		for {
-			conn, err := server.listener.AcceptTCP()
+			c, err := server.listener.AcceptTCP()
 			if err != nil {
 				//TODO 需要正确处理接收错误
 				break
@@ -57,14 +57,14 @@ func (server *ServerTCP) Open() error {
 
 			buf := make([]byte, 128)
 			n := 0
-			n, err = conn.Read(buf)
+			n, err = c.Read(buf)
 			if err != nil {
-				_ = conn.Close()
+				_ = c.Close()
 				continue
 			}
 			data := buf[:n]
 			if !server.server.Register.Check(data) {
-				_ = conn.Close()
+				_ = c.Close()
 				continue
 			}
 
@@ -73,34 +73,42 @@ func (server *ServerTCP) Open() error {
 				ServerId: server.server.Id,
 				Addr:     sn,
 			}
-			has, err := db.Engine.Where("server_id=?", server.server.Id).And("addr", sn).Get(&tunnel)
+
+			err = db.Store().FindOne(&tunnel, bolthold.Where("ServerId").Eq(server.server.Id).And("SN").Eq(sn))
+			has := err == bolthold.ErrNotFound
+			//has, err := db.Engine.Where("server_id=?", server.server.Id).And("addr", sn).Get(&tunnel)
 			if err != nil {
-				//return err
-				//TODO 日志，关闭连接
+				_ = mqtt.Publish(fmt.Sprintf("server/%d/error", server.server.Id), []byte(err.Error()))
 				continue
 			}
 
 			tunnel.Last = time.Now()
-			tunnel.Remote = conn.RemoteAddr().String()
+			tunnel.Remote = c.RemoteAddr().String()
 			if !has {
 				//保存一条新记录
 				tunnel.Type = "server-tcp"
 				tunnel.Name = sn
+				tunnel.SN = sn
+				tunnel.Addr = server.server.Addr
 				tunnel.Heartbeat = server.server.Heartbeat
 				tunnel.Protocol = server.server.Protocol
-				_, _ = db.Engine.InsertOne(&tunnel)
+				//_, _ = db.Engine.InsertOne(&tunnel)
+				tunnel.Created = time.Now()
+				_ = db.Store().Insert(bolthold.NextSequence(), &tunnel)
 			} else {
 				//上线
-				_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
+				//_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
+				_ = db.Store().Update(tunnel.Id, &tunnel)
 			}
+			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", tunnel.Id), nil)
 
-			tnl := newServerTcpTunnel(&tunnel, conn)
+			tnl := newServerTcpTunnel(&tunnel, c)
 			tnl.first = !has
 			go tnl.receive()
 			server.children[tunnel.Id] = tnl
 
 			//启动对应的设备 发消息
-			server.Emit("server", tnl)
+			server.Emit("tunnel", tnl)
 
 			tnl.Once("close", func() {
 				delete(server.children, tunnel.Id)
@@ -113,7 +121,7 @@ func (server *ServerTCP) Open() error {
 	return nil
 }
 
-// Close 关闭
+//Close 关闭
 func (server *ServerTCP) Close() (err error) {
 	server.Emit("close")
 	//close tunnels
@@ -125,8 +133,8 @@ func (server *ServerTCP) Close() (err error) {
 	return server.listener.Close()
 }
 
-// GetTunnel 获取连接
-func (server *ServerTCP) GetTunnel(id int64) Tunnel {
+//GetTunnel 获取连接
+func (server *ServerTCP) GetTunnel(id uint64) link.Tunnel {
 	return server.children[id]
 }
 

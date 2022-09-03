@@ -33,8 +33,8 @@ func (s *TunnelSerial) Open() error {
 		DataBits:              s.tunnel.Serial.DataBits,
 		StopBits:              s.tunnel.Serial.StopBits,
 		ParityMode:            serial.ParityMode(s.tunnel.Serial.Parity),
-		MinimumReadSize:       4, //避免单字节读出
-		InterCharacterTimeout: 100,
+		MinimumReadSize:       4,   //避免单字节读出
+		InterCharacterTimeout: 100, //100ms分包
 	}
 
 	port, err := serial.Open(mode)
@@ -55,7 +55,8 @@ func (s *TunnelSerial) Open() error {
 
 	//上线
 	s.tunnel.Last = time.Now()
-	_, _ = db.Engine.ID(s.tunnel.Id).Cols("last").Update(s.tunnel)
+	_ = db.Store().Update(s.tunnel.Id, &s.tunnel)
+	_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", s.tunnel.Id), nil)
 
 	return nil
 }

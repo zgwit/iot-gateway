@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/kardianos/service"
 	"iot-master-gateway/args"
 	"iot-master-gateway/config"
@@ -12,21 +11,10 @@ import (
 	"syscall"
 )
 
-const banner = `
-###        #######       #     #                                   
- #            #          ##   ##   ##    ####  ##### ###### #####  
- #    ####    #          # # # #  #  #  #        #   #      #    # 
- #   #    #   #   #####  #  #  # #    #  ####    #   #####  #    # 
- #   #    #   #          #     # ######      #   #   #      #####  
- #    ####    #          #     # #    # #    #   #   #      #   #  
-###           #          #     # #    #  ####    #   ###### #    # 
-
-`
-
 var serviceConfig = &service.Config{
 	Name:        "iot-master-gateway",
-	DisplayName: "物联大师",
-	Description: "物联网设备自动控制系统",
+	DisplayName: "物联大师网关",
+	Description: "物联大师网关",
 	Arguments:   nil,
 }
 
@@ -112,8 +100,6 @@ func (p *Program) run() {
 }
 
 func originMain() {
-	fmt.Print(banner)
-
 	err := config.Load()
 	if err != nil {
 		log.Fatal(err)

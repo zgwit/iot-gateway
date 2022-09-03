@@ -44,7 +44,8 @@ func (client *TunnelClient) Open() error {
 	//上线
 	client.tunnel.Last = time.Now()
 	client.tunnel.Remote = conn.LocalAddr().String()
-	_, _ = db.Engine.ID(client.tunnel.Id).Cols("last", "remote").Update(client.tunnel)
+	_ = db.Store().Update(client.tunnel.Id, &client.tunnel)
+	_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", client.tunnel.Id), nil)
 
 	return nil
 }

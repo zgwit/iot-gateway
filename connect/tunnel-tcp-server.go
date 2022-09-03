@@ -52,7 +52,8 @@ func (server *TunnelTcpServer) Open() error {
 			//上线
 			server.tunnel.Last = time.Now()
 			server.tunnel.Remote = conn.RemoteAddr().String()
-			_, _ = db.Engine.ID(server.tunnel.Id).Cols("last", "remote").Update(server.tunnel)
+			_ = db.Store().Update(server.tunnel.Id, &server.tunnel)
+			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", server.tunnel.Id), nil)
 
 			server.receive()
 		}

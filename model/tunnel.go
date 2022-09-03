@@ -14,22 +14,21 @@ type Protocol struct {
 
 //Tunnel 通道模型
 type Tunnel struct {
-	Id        int64           `json:"id"`
-	ServerId  int64           `json:"server_id" xorm:"index"`
+	Id        uint64          `json:"id"`
+	ServerId  uint64          `json:"server_id" boltholdIndex:"ServerId"`
 	Name      string          `json:"name"`
+	SN        string          `json:"sn" boltholdIndex:"Addr"`
 	Type      string          `json:"type"` //serial tcp-client tcp-server udp-client udp-server server-tcp server-udp
-	Addr      string          `json:"addr" xorm:"index"`
+	Addr      string          `json:"addr"`
 	Remote    string          `json:"remote"`
-	Retry     Retry           `json:"retry" xorm:"JSON"` //重试
-	Heartbeat HeartBeatPacket `json:"heartbeat" xorm:"JSON"`
-	Serial    SerialOptions   `json:"serial" xorm:"JSON"`
-	Protocol  Protocol        `json:"protocol" xorm:"JSON"`
+	Retry     Retry           `json:"retry"` //重试
+	Heartbeat HeartBeatPacket `json:"heartbeat"`
+	Serial    SerialOptions   `json:"serial"`
+	Protocol  Protocol        `json:"protocol"`
 	//Devices   []DefaultDevice  `json:"devices"` //默认设备
 	Disabled bool      `json:"disabled"`
 	Last     time.Time `json:"last"`
-	Updated  time.Time `json:"updated" xorm:"updated"`
 	Created  time.Time `json:"created" xorm:"created"`
-	//Deleted  time.Time `json:"-" xorm:"deleted"`
 }
 
 type DefaultDevice struct {

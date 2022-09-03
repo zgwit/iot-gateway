@@ -3,6 +3,7 @@ module iot-master-gateway
 go 1.19
 
 require (
+	github.com/eclipse/paho.mqtt.golang v1.4.1
 	github.com/glebarez/go-sqlite v1.18.1
 	github.com/go-co-op/gocron v1.17.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -10,6 +11,7 @@ require (
 	github.com/kardianos/service v1.2.1
 	github.com/lib/pq v1.10.6
 	github.com/sirupsen/logrus v1.9.0
+	github.com/timshannon/bolthold v0.0.0-20210913165410-232392fc8a6a
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gopkg.in/yaml.v3 v3.0.1
 	xorm.io/xorm v1.3.2
@@ -19,6 +21,7 @@ require (
 	github.com/goccy/go-json v0.8.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -26,6 +29,8 @@ require (
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/syndtr/goleveldb v1.0.0 // indirect
+	go.etcd.io/bbolt v1.3.6 // indirect
+	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	modernc.org/libc v1.16.19 // indirect

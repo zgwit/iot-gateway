@@ -15,7 +15,7 @@ type ServerUDP struct {
 
 	server *model.Server
 
-	children map[int64]*ServerUdpTunnel
+	children map[uint64]*ServerUdpTunnel
 	tunnels  map[string]*ServerUdpTunnel
 
 	listener *net.UDPConn
@@ -25,7 +25,7 @@ type ServerUDP struct {
 func newServerUDP(server *model.Server) *ServerUDP {
 	svr := &ServerUDP{
 		server:   server,
-		children: make(map[int64]*ServerUdpTunnel),
+		children: make(map[uint64]*ServerUdpTunnel),
 		tunnels:  make(map[string]*ServerUdpTunnel),
 	}
 	return svr
@@ -42,20 +42,20 @@ func (server *ServerUDP) Open() error {
 	if err != nil {
 		return err
 	}
-	conn, err := net.ListenUDP("udp", addr)
+	c, err := net.ListenUDP("udp", addr)
 	if err != nil {
 		//TODO 需要正确处理接收错误
 		return err
 	}
-	server.listener = conn //共用连接
+	server.listener = c //共用连接
 
 	server.running = true
 	go func() {
 		for {
 			buf := make([]byte, 1024)
-			n, addr, err := conn.ReadFromUDP(buf)
+			n, addr, err := c.ReadFromUDP(buf)
 			if err != nil {
-				_ = conn.Close()
+				_ = c.Close()
 				//continue
 				break
 			}
@@ -69,7 +69,7 @@ func (server *ServerUDP) Open() error {
 			}
 
 			if !server.server.Register.Check(data) {
-				_ = conn.Close()
+				_ = c.Close()
 				continue
 			}
 			sn := string(data)
@@ -77,28 +77,37 @@ func (server *ServerUDP) Open() error {
 				ServerId: server.server.Id,
 				Addr:     sn,
 			}
-			has, err := db.Engine.Where("server_id=?", server.server.Id).And("addr", sn).Get(&tunnel)
+
+			err = db.Store().FindOne(&tunnel, bolthold.Where("ServerId").Eq(server.server.Id).And("SN").Eq(sn))
+			has := err == bolthold.ErrNotFound
+			//has, err := db.Engine.Where("server_id=?", server.server.Id).And("addr", sn).Get(&tunnel)
 			if err != nil {
-				//return err
-				//TODO 日志，关闭连接
+				_ = mqtt.Publish(fmt.Sprintf("server/%d/error", server.server.Id), []byte(err.Error()))
 				continue
 			}
 
 			tunnel.Last = time.Now()
-			tunnel.Remote = conn.RemoteAddr().String()
+			tunnel.Remote = c.RemoteAddr().String()
 			if !has {
 				//保存一条新记录
 				tunnel.Type = "server-udp"
 				tunnel.Name = sn
+				tunnel.Name = sn
+				tunnel.SN = sn
+				tunnel.Addr = server.server.Addr
 				tunnel.Heartbeat = server.server.Heartbeat
 				tunnel.Protocol = server.server.Protocol
-				_, _ = db.Engine.InsertOne(&tunnel)
+				//_, _ = db.Engine.InsertOne(&tunnel)
+				tunnel.Created = time.Now()
+				_ = db.Store().Insert(bolthold.NextSequence(), &tunnel)
 			} else {
 				//上线
-				_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
+				//_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
+				_ = db.Store().Update(tunnel.Id, &tunnel)
 			}
+			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", server.server.Id), nil)
 
-			tnl = newServerUdpTunnel(&tunnel, conn, addr)
+			tnl = newServerUdpTunnel(&tunnel, c, addr)
 			tnl.first = !has
 			server.children[tunnel.Id] = tnl
 
@@ -132,7 +141,7 @@ func (server *ServerUDP) Close() (err error) {
 }
 
 //GetTunnel 获取链接
-func (server *ServerUDP) GetTunnel(id int64) Tunnel {
+func (server *ServerUDP) GetTunnel(id uint64) link.Tunnel {
 	return server.children[id]
 }
 

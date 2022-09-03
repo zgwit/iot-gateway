@@ -7,7 +7,12 @@ import (
 	"os"
 )
 
-func Open(opts *config.Log) error {
+func Open(opts config.Log) error {
+
+	if opts.Caller {
+		logrus.SetReportCaller(true)
+	}
+
 	if opts.Text {
 		logrus.SetFormatter(&logrus.TextFormatter{TimestampFormat: opts.Format})
 	} else {

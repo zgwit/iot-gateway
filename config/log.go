@@ -7,15 +7,17 @@ type LogOutput struct {
 	MaxBackups int    `yaml:"max_backups" json:"max_backups,omitempty"`
 }
 
-//Log 参数
+// Log 参数
 type Log struct {
 	Level  string    `yaml:"level" json:"level"`
+	Caller bool      `yaml:"caller" json:"caller"`
 	Text   bool      `yaml:"text" json:"text,omitempty"`
 	Format string    `yaml:"format,omitempty" json:"format,omitempty"`
 	Output LogOutput `yaml:"output" json:"output"`
 }
 
 var LogDefault = Log{
-	Level: "trace",
-	Text:  false,
+	Level:  "trace",
+	Caller: true,
+	Text:   false,
 }
