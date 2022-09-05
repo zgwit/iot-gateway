@@ -12,7 +12,6 @@ type Configure struct {
 	Node     string   `yaml:"node" json:"node"`
 	Data     string   `yaml:"data" json:"data"`
 	Database Database `yaml:"database" json:"database"`
-	Master   MQTT     `yaml:"master" json:"master"`
 	MQTT     MQTT     `yaml:"mqtt" json:"mqtt"`
 	Log      Log      `yaml:"log" json:"log"`
 }
@@ -22,7 +21,6 @@ var Config = Configure{
 	Node:     "root",
 	Data:     "data",
 	Database: DatabaseDefault,
-	Master:   MQTTDefault,
 	MQTT:     MQTTDefault,
 	Log:      LogDefault,
 }

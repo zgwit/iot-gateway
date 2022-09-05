@@ -2,10 +2,12 @@ package connect
 
 import (
 	"errors"
+	"fmt"
 	"github.com/jacobsa/go-serial/serial"
 	"iot-master-gateway/db"
 	"iot-master-gateway/log"
 	"iot-master-gateway/model"
+	"iot-master-gateway/mqtt"
 	"time"
 )
 

@@ -2,13 +2,15 @@ package connect
 
 import (
 	"errors"
+	"fmt"
 	"iot-master-gateway/db"
 	"iot-master-gateway/model"
+	"iot-master-gateway/mqtt"
 	"net"
 	"time"
 )
 
-//TunnelTcpServer TCP服务器
+// TunnelTcpServer TCP服务器
 type TunnelTcpServer struct {
 	tunnelBase
 
@@ -22,7 +24,7 @@ func newTunnelTcpServer(tunnel *model.Tunnel) *TunnelTcpServer {
 	return svr
 }
 
-//Open 打开
+// Open 打开
 func (server *TunnelTcpServer) Open() error {
 	if server.running {
 		return errors.New("server is opened")
@@ -100,7 +102,7 @@ func (server *TunnelTcpServer) receive() {
 	server.Emit("offline")
 }
 
-//Close 关闭
+// Close 关闭
 func (server *TunnelTcpServer) Close() error {
 	if server.listener != nil {
 		err := server.listener.Close()

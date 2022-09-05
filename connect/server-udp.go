@@ -2,14 +2,17 @@ package connect
 
 import (
 	"errors"
+	"fmt"
+	"github.com/timshannon/bolthold"
 	"iot-master-gateway/db"
 	"iot-master-gateway/model"
+	"iot-master-gateway/mqtt"
 	"iot-master-gateway/pkg/events"
 	"net"
 	"time"
 )
 
-//ServerUDP UDP服务器
+// ServerUDP UDP服务器
 type ServerUDP struct {
 	events.EventEmitter
 
@@ -31,7 +34,7 @@ func newServerUDP(server *model.Server) *ServerUDP {
 	return svr
 }
 
-//Open 打开
+// Open 打开
 func (server *ServerUDP) Open() error {
 	if server.running {
 		return errors.New("server is opened")
@@ -128,7 +131,7 @@ func (server *ServerUDP) Open() error {
 	return nil
 }
 
-//Close 关闭
+// Close 关闭
 func (server *ServerUDP) Close() (err error) {
 	server.Emit("close")
 	//close tunnels
@@ -140,8 +143,8 @@ func (server *ServerUDP) Close() (err error) {
 	return server.listener.Close()
 }
 
-//GetTunnel 获取链接
-func (server *ServerUDP) GetTunnel(id uint64) link.Tunnel {
+// GetTunnel 获取链接
+func (server *ServerUDP) GetTunnel(id uint64) Tunnel {
 	return server.children[id]
 }
 

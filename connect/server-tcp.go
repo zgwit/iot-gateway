@@ -2,8 +2,11 @@ package connect
 
 import (
 	"errors"
+	"fmt"
+	"github.com/timshannon/bolthold"
 	"iot-master-gateway/db"
 	"iot-master-gateway/model"
+	"iot-master-gateway/mqtt"
 	"iot-master-gateway/pkg/events"
 	"net"
 	"time"
@@ -121,7 +124,7 @@ func (server *ServerTCP) Open() error {
 	return nil
 }
 
-//Close 关闭
+// Close 关闭
 func (server *ServerTCP) Close() (err error) {
 	server.Emit("close")
 	//close tunnels
@@ -133,8 +136,8 @@ func (server *ServerTCP) Close() (err error) {
 	return server.listener.Close()
 }
 
-//GetTunnel 获取连接
-func (server *ServerTCP) GetTunnel(id uint64) link.Tunnel {
+// GetTunnel 获取连接
+func (server *ServerTCP) GetTunnel(id uint64) Tunnel {
 	return server.children[id]
 }
 

@@ -2,14 +2,16 @@ package connect
 
 import (
 	"errors"
+	"fmt"
 	"iot-master-gateway/db"
 	"iot-master-gateway/log"
 	"iot-master-gateway/model"
+	"iot-master-gateway/mqtt"
 	"net"
 	"time"
 )
 
-//TunnelClient 网络链接
+// TunnelClient 网络链接
 type TunnelClient struct {
 	tunnelBase
 	net string
@@ -22,7 +24,7 @@ func newTunnelClient(tunnel *model.Tunnel, net string) *TunnelClient {
 	}
 }
 
-//Open 打开
+// Open 打开
 func (client *TunnelClient) Open() error {
 	if client.running {
 		return errors.New("client is opened")
@@ -106,7 +108,7 @@ func (client *TunnelClient) receive() {
 	client.Retry()
 }
 
-//Close 关闭
+// Close 关闭
 func (client *TunnelClient) Close() error {
 	client.running = false
 
