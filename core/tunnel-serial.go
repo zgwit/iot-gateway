@@ -1,4 +1,4 @@
-package connect
+package core
 
 import (
 	"errors"
@@ -27,7 +27,6 @@ func (s *TunnelSerial) Open() error {
 	if s.running {
 		return errors.New("serial is opened")
 	}
-	s.Emit("open")
 
 	mode := serial.OpenOptions{
 		PortName:              s.tunnel.Serial.Port,
@@ -79,7 +78,6 @@ func (s *TunnelSerial) Retry() {
 func (s *TunnelSerial) receive() {
 	s.running = true
 	s.online = true
-	s.Emit("online")
 
 	buf := make([]byte, 1024)
 	for {
@@ -100,11 +98,9 @@ func (s *TunnelSerial) receive() {
 				continue
 			}
 		}
-		s.Emit("data", buf[:n])
 	}
 	s.running = false
 	s.online = false
-	s.Emit("offline")
 
 	s.Retry()
 }

@@ -1,11 +1,10 @@
-package connect
+package core
 
 import (
 	"errors"
 	"io"
 	"iot-master-gateway/model"
 	"net"
-	"time"
 )
 
 // TunnelUdpServer UDP服务器
@@ -27,7 +26,6 @@ func (server *TunnelUdpServer) Open() error {
 	if server.running {
 		return errors.New("server is opened")
 	}
-	server.Emit("open")
 
 	addr, err := net.ResolveUDPAddr("udp", resolvePort(server.tunnel.Addr))
 	if err != nil {
@@ -39,9 +37,8 @@ func (server *TunnelUdpServer) Open() error {
 		return err
 	}
 	server.conn = conn //共用连接
-
 	server.running = true
-	server.Emit("online")
+
 	go func() {
 		for {
 			buf := make([]byte, 1024)
@@ -59,12 +56,9 @@ func (server *TunnelUdpServer) Open() error {
 			if server.tunnel.Heartbeat.Enable && server.tunnel.Heartbeat.Check(data) {
 				continue
 			}
-
-			server.Emit("data", data)
 		}
 		server.running = false
 		server.online = false
-		server.Emit("offline")
 	}()
 
 	return nil
@@ -80,18 +74,6 @@ func (server *TunnelUdpServer) Write(data []byte) error {
 		server.onClose()
 	}
 	return err
-}
-
-func (server *TunnelUdpServer) Ask(cmd []byte, timeout time.Duration) ([]byte, error) {
-	//堵塞
-	server.lock.Lock()
-	defer server.lock.Unlock() //自动解锁
-
-	err := server.Write(cmd)
-	if err != nil {
-		return nil, err
-	}
-	return server.wait(timeout)
 }
 
 func (server *TunnelUdpServer) Pipe(pipe io.ReadWriteCloser) {
@@ -135,7 +117,6 @@ func (server *TunnelUdpServer) Close() (err error) {
 	if !server.running {
 		return errors.New("tunnel closed")
 	}
-	server.Emit("close")
 	server.onClose()
 	return server.conn.Close()
 }

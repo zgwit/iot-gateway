@@ -1,4 +1,4 @@
-package connect
+package core
 
 import (
 	"errors"
@@ -7,74 +7,66 @@ import (
 	"iot-master-gateway/db"
 	"iot-master-gateway/model"
 	"iot-master-gateway/mqtt"
-	"iot-master-gateway/pkg/events"
 	"net"
 	"time"
 )
 
-// ServerUDP UDP服务器
-type ServerUDP struct {
-	events.EventEmitter
-
+// ServerTCP TCP服务器
+type ServerTCP struct {
 	server *model.Server
 
-	children map[uint64]*ServerUdpTunnel
-	tunnels  map[string]*ServerUdpTunnel
+	children map[uint64]*ServerTcpTunnel
 
-	listener *net.UDPConn
-	running  bool
+	listener *net.TCPListener
+
+	running bool
 }
 
-func newServerUDP(server *model.Server) *ServerUDP {
-	svr := &ServerUDP{
+func newServerTCP(server *model.Server) *ServerTCP {
+	svr := &ServerTCP{
 		server:   server,
-		children: make(map[uint64]*ServerUdpTunnel),
-		tunnels:  make(map[string]*ServerUdpTunnel),
+		children: make(map[uint64]*ServerTcpTunnel),
 	}
 	return svr
 }
 
 // Open 打开
-func (server *ServerUDP) Open() error {
+func (server *ServerTCP) Open() error {
 	if server.running {
 		return errors.New("server is opened")
 	}
-	server.Emit("open")
 
-	addr, err := net.ResolveUDPAddr("udp", resolvePort(server.server.Addr))
+	addr, err := net.ResolveTCPAddr("tcp", resolvePort(server.server.Addr))
 	if err != nil {
 		return err
 	}
-	c, err := net.ListenUDP("udp", addr)
+	server.listener, err = net.ListenTCP("tcp", addr)
 	if err != nil {
-		//TODO 需要正确处理接收错误
 		return err
 	}
-	server.listener = c //共用连接
 
 	server.running = true
 	go func() {
 		for {
-			buf := make([]byte, 1024)
-			n, addr, err := c.ReadFromUDP(buf)
+			c, err := server.listener.AcceptTCP()
 			if err != nil {
-				_ = c.Close()
-				//continue
+				//TODO 需要正确处理接收错误
 				break
 			}
-			data := buf[:n]
 
-			//如果已经保存了链接 TODO 要有超时处理
-			tnl, ok := server.tunnels[addr.String()]
-			if ok {
-				tnl.onData(data)
+			buf := make([]byte, 128)
+			n := 0
+			n, err = c.Read(buf)
+			if err != nil {
+				_ = c.Close()
 				continue
 			}
-
+			data := buf[:n]
 			if !server.server.Register.Check(data) {
 				_ = c.Close()
 				continue
 			}
+
 			sn := string(data)
 			tunnel := model.Tunnel{
 				ServerId: server.server.Id,
@@ -93,8 +85,7 @@ func (server *ServerUDP) Open() error {
 			tunnel.Remote = c.RemoteAddr().String()
 			if !has {
 				//保存一条新记录
-				tunnel.Type = "server-udp"
-				tunnel.Name = sn
+				tunnel.Type = "server-tcp"
 				tunnel.Name = sn
 				tunnel.SN = sn
 				tunnel.Addr = server.server.Addr
@@ -108,21 +99,12 @@ func (server *ServerUDP) Open() error {
 				//_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
 				_ = db.Store().Update(tunnel.Id, &tunnel)
 			}
-			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", server.server.Id), nil)
+			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", tunnel.Id), nil)
 
-			tnl = newServerUdpTunnel(&tunnel, c, addr)
+			tnl := newServerTcpTunnel(&tunnel, c)
 			tnl.first = !has
+			go tnl.receive()
 			server.children[tunnel.Id] = tnl
-
-			//启动对应的设备 发消息
-			server.Emit("tunnel", tnl)
-
-			tnl.Emit("online")
-
-			tnl.Once("close", func() {
-				delete(server.children, tunnel.Id)
-				delete(server.tunnels, tnl.addr.String())
-			})
 		}
 
 		server.running = false
@@ -132,8 +114,7 @@ func (server *ServerUDP) Open() error {
 }
 
 // Close 关闭
-func (server *ServerUDP) Close() (err error) {
-	server.Emit("close")
+func (server *ServerTCP) Close() (err error) {
 	//close tunnels
 	if server.children != nil {
 		for _, l := range server.children {
@@ -143,11 +124,11 @@ func (server *ServerUDP) Close() (err error) {
 	return server.listener.Close()
 }
 
-// GetTunnel 获取链接
-func (server *ServerUDP) GetTunnel(id uint64) Tunnel {
+// GetTunnel 获取连接
+func (server *ServerTCP) GetTunnel(id uint64) Tunnel {
 	return server.children[id]
 }
 
-func (server *ServerUDP) Running() bool {
+func (server *ServerTCP) Running() bool {
 	return server.running
 }

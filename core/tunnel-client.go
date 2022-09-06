@@ -1,4 +1,4 @@
-package connect
+package core
 
 import (
 	"errors"
@@ -29,7 +29,6 @@ func (client *TunnelClient) Open() error {
 	if client.running {
 		return errors.New("client is opened")
 	}
-	client.Emit("open")
 
 	//发起连接
 	conn, err := net.Dial(client.net, client.tunnel.Addr)
@@ -71,8 +70,6 @@ func (client *TunnelClient) receive() {
 	client.running = true
 	client.online = true
 
-	client.Emit("online")
-
 	buf := make([]byte, 1024)
 	for {
 		n, err := client.link.Read(buf)
@@ -99,11 +96,9 @@ func (client *TunnelClient) receive() {
 				continue
 			}
 		}
-		client.Emit("data", data)
 	}
 	client.running = false
 	client.online = false
-	client.Emit("offline")
 
 	client.Retry()
 }
@@ -111,9 +106,6 @@ func (client *TunnelClient) receive() {
 // Close 关闭
 func (client *TunnelClient) Close() error {
 	client.running = false
-
-	//记录启动
-	client.Emit("close")
 
 	if client.link != nil {
 		link := client.link

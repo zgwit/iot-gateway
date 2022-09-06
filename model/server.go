@@ -15,10 +15,10 @@ type Server struct {
 	Protocol  Protocol        `json:"protocol"`
 	Devices   []DefaultDevice `json:"devices"` //默认设备
 	Disabled  bool            `json:"disabled"`
-	Created   time.Time       `json:"created" xorm:"created"`
+	Created   time.Time       `json:"created"`
 }
 
-//RegisterPacket 注册包
+// RegisterPacket 注册包
 type RegisterPacket struct {
 	Regex  string `json:"regex,omitempty"`
 	Length int    `json:"length,omitempty"`

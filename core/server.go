@@ -1,15 +1,12 @@
-package connect
+package core
 
 import (
 	"fmt"
 	"iot-master-gateway/model"
-	"iot-master-gateway/pkg/events"
 )
 
 // Server 通道
 type Server interface {
-	events.EventInterface
-
 	Open() error
 	Close() error
 	GetTunnel(id uint64) Tunnel

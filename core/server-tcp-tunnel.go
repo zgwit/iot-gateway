@@ -1,4 +1,4 @@
-package connect
+package core
 
 import (
 	"errors"
@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-//ServerTcpTunnel 网络连接
+// ServerTcpTunnel 网络连接
 type ServerTcpTunnel struct {
 	tunnelBase
 }
@@ -25,7 +25,6 @@ func (l *ServerTcpTunnel) Open() error {
 func (l *ServerTcpTunnel) receive() {
 	l.running = true
 	l.online = true
-	l.Emit("online")
 
 	buf := make([]byte, 1024)
 	for {
@@ -46,9 +45,7 @@ func (l *ServerTcpTunnel) receive() {
 				continue
 			}
 		}
-		l.Emit("data", buf[:n])
 	}
 	l.running = false
 	l.online = false
-	l.Emit("offline")
 }

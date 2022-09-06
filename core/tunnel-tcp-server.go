@@ -1,4 +1,4 @@
-package connect
+package core
 
 import (
 	"errors"
@@ -29,7 +29,6 @@ func (server *TunnelTcpServer) Open() error {
 	if server.running {
 		return errors.New("server is opened")
 	}
-	server.Emit("open")
 
 	addr, err := net.ResolveTCPAddr("tcp", resolvePort(server.tunnel.Addr))
 	if err != nil {
@@ -68,7 +67,6 @@ func (server *TunnelTcpServer) Open() error {
 
 func (server *TunnelTcpServer) receive() {
 	server.online = true
-	server.Emit("online")
 
 	buf := make([]byte, 1024)
 	for {
@@ -96,10 +94,8 @@ func (server *TunnelTcpServer) receive() {
 				continue
 			}
 		}
-		server.Emit("data", data)
 	}
 	server.online = false
-	server.Emit("offline")
 }
 
 // Close 关闭

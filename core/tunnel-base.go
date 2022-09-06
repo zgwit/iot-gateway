@@ -1,17 +1,14 @@
-package connect
+package core
 
 import (
 	"errors"
 	"io"
 	"iot-master-gateway/model"
-	"iot-master-gateway/pkg/events"
 	"sync"
 	"time"
 )
 
 type tunnelBase struct {
-	events.EventEmitter
-
 	tunnel *model.Tunnel
 
 	lock sync.Mutex
@@ -52,7 +49,7 @@ func (l *tunnelBase) Close() error {
 	if !l.running {
 		return errors.New("tunnel closed")
 	}
-	l.Emit("close")
+
 	l.onClose()
 	return l.link.Close()
 }
@@ -62,48 +59,29 @@ func (l *tunnelBase) onClose() {
 	if l.pipe != nil {
 		_ = l.pipe.Close()
 	}
-	l.Emit("close")
 }
 
 // Write 写
-func (l *tunnelBase) Write(data []byte) error {
+func (l *tunnelBase) Write(data []byte) (int, error) {
 	if !l.running {
-		return errors.New("tunnel closed")
+		return 0, errors.New("tunnel closed")
 	}
 	if l.pipe != nil {
-		return nil //透传模式下，直接抛弃
+		return 0, nil //透传模式下，直接抛弃
 	}
-	_, err := l.link.Write(data)
-	return err
+	return l.link.Write(data)
 }
 
-func (l *tunnelBase) wait(duration time.Duration) ([]byte, error) {
-	resp := make(chan []byte, 1)
-	l.Once("data", func(data []byte) {
-		resp <- data
-	})
-	select {
-	case <-time.After(duration):
-		return nil, errors.New("超时")
-	case buf := <-resp:
-		return buf, nil
-	}
-}
-
-func (l *tunnelBase) Ask(cmd []byte, timeout time.Duration) ([]byte, error) {
+// Write 写
+func (l *tunnelBase) Read(data []byte) (int, error) {
 	if !l.running {
-		return nil, errors.New("tunnel closed")
+		return 0, errors.New("tunnel closed")
 	}
-
-	//堵塞
-	l.lock.Lock()
-	defer l.lock.Unlock() //自动解锁
-
-	_, err := l.link.Write(cmd)
-	if err != nil {
-		return nil, err
+	if l.pipe != nil {
+		//TODO 先read，然后透传
+		return 0, nil //透传模式下，直接抛弃
 	}
-	return l.wait(timeout)
+	return l.link.Read(data)
 }
 
 func (l *tunnelBase) Pipe(pipe io.ReadWriteCloser) {
@@ -137,4 +115,8 @@ func (l *tunnelBase) Pipe(pipe io.ReadWriteCloser) {
 		}
 	}
 	l.pipe = nil
+
+	//TODO 使用io.copy
+	//go io.Copy(pipe, l.link)
+	//go io.Copy(l.link, pipe)
 }

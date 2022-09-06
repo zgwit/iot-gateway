@@ -1,14 +1,13 @@
-package connect
+package core
 
 import (
 	"errors"
 	"io"
 	"iot-master-gateway/model"
 	"net"
-	"time"
 )
 
-//ServerUdpTunnel UDP链接
+// ServerUdpTunnel UDP链接
 type ServerUdpTunnel struct {
 	tunnelBase
 
@@ -35,7 +34,7 @@ func (l *ServerUdpTunnel) Close() error {
 	return errors.New("ServerUdpTunnel cannot close")
 }
 
-//Write 写
+// Write 写
 func (l *ServerUdpTunnel) Write(data []byte) error {
 	if !l.running {
 		return errors.New("tunnel closed")
@@ -45,21 +44,6 @@ func (l *ServerUdpTunnel) Write(data []byte) error {
 	}
 	_, err := l.conn.WriteToUDP(data, l.addr)
 	return err
-}
-
-func (l *ServerUdpTunnel) Ask(cmd []byte, timeout time.Duration) ([]byte, error) {
-	if !l.running {
-		return nil, errors.New("tunnel closed")
-	}
-	//堵塞
-	l.lock.Lock()
-	defer l.lock.Unlock() //自动解锁
-
-	err := l.Write(cmd)
-	if err != nil {
-		return nil, err
-	}
-	return l.wait(timeout)
 }
 
 func (l *ServerUdpTunnel) Pipe(pipe io.ReadWriteCloser) {

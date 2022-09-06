@@ -12,7 +12,7 @@ type Protocol struct {
 	Options map[string]interface{} `json:"options"`
 }
 
-//Tunnel 通道模型
+// Tunnel 通道模型
 type Tunnel struct {
 	Id        uint64          `json:"id"`
 	ServerId  uint64          `json:"server_id" boltholdIndex:"ServerId"`
@@ -28,7 +28,7 @@ type Tunnel struct {
 	//Devices   []DefaultDevice  `json:"devices"` //默认设备
 	Disabled bool      `json:"disabled"`
 	Last     time.Time `json:"last"`
-	Created  time.Time `json:"created" xorm:"created"`
+	Created  time.Time `json:"created"`
 }
 
 type DefaultDevice struct {
@@ -53,7 +53,7 @@ type Retry struct {
 	Maximum int  `json:"maximum"`
 }
 
-//SerialOptions 串口参数
+// SerialOptions 串口参数
 type SerialOptions struct {
 	Port     string `json:"port"`      // /dev/tty.usb.. COM1
 	BaudRate uint   `json:"baud_rate"` //9600 ... 115200 ...
@@ -63,7 +63,7 @@ type SerialOptions struct {
 	//RS485    bool   `json:"rs485"`
 }
 
-//Check 检查
+// Check 检查
 func (p *RegisterPacket) Check(buf []byte) bool {
 	if p.Regex != "" {
 		if p.regex == nil {
@@ -79,7 +79,7 @@ func (p *RegisterPacket) Check(buf []byte) bool {
 	return true
 }
 
-//HeartBeatPacket 心跳包
+// HeartBeatPacket 心跳包
 type HeartBeatPacket struct {
 	Enable  bool   `json:"enable"`
 	Timeout int64  `json:"timeout"`
@@ -93,7 +93,7 @@ type HeartBeatPacket struct {
 	last  int64
 }
 
-//Check 检查
+// Check 检查
 func (p *HeartBeatPacket) Check(buf []byte) bool {
 
 	now := time.Now().Unix()

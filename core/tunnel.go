@@ -1,25 +1,19 @@
-package connect
+package core
 
 import (
 	"fmt"
 	"io"
 	"iot-master-gateway/model"
-	"iot-master-gateway/pkg/events"
 	"strings"
-	"time"
 )
 
-//Tunnel 通道
+// Tunnel 通道
 type Tunnel interface {
-	events.EventInterface
+	io.ReadWriteCloser
 
 	Model() *model.Tunnel
 
-	Write(data []byte) error
-
 	Open() error
-
-	Close() error
 
 	Running() bool
 
@@ -29,12 +23,9 @@ type Tunnel interface {
 
 	//Pipe 透传
 	Pipe(pipe io.ReadWriteCloser)
-
-	//Ask 发送指令，接收数据
-	Ask(cmd []byte, timeout time.Duration) ([]byte, error)
 }
 
-//NewTunnel 创建通道
+// NewTunnel 创建通道
 func NewTunnel(tunnel *model.Tunnel) (Tunnel, error) {
 	var tnl Tunnel
 	switch tunnel.Type {

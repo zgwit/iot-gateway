@@ -127,7 +127,7 @@ func shutdown() error {
 
 	//_ = database.Close()
 	//_ = tsdb.Close()
-	//connect.Close()
+	//core.Close()
 	//master.Close()
 
 	//只关闭Web就行了，其他通过defer关闭
