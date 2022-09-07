@@ -89,7 +89,6 @@ func (server *ServerTCP) Open() error {
 				tunnel.Name = sn
 				tunnel.SN = sn
 				tunnel.Addr = server.server.Addr
-				tunnel.Heartbeat = server.server.Heartbeat
 				tunnel.Protocol = server.server.Protocol
 				//_, _ = db.Engine.InsertOne(&tunnel)
 				tunnel.Created = time.Now()

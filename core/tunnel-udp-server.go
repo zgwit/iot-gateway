@@ -39,41 +39,21 @@ func (server *TunnelUdpServer) Open() error {
 	server.conn = conn //共用连接
 	server.running = true
 
-	go func() {
-		for {
-			buf := make([]byte, 1024)
-			n, addr, err := conn.ReadFromUDP(buf)
-			if err != nil {
-				_ = conn.Close()
-				//continue
-				break
-			}
-			server.online = true
-			server.addr = addr
-
-			data := buf[:n]
-			//过滤心跳包
-			if server.tunnel.Heartbeat.Enable && server.tunnel.Heartbeat.Check(data) {
-				continue
-			}
-		}
-		server.running = false
-		server.online = false
-	}()
-
 	return nil
 }
 
+func (server *TunnelUdpServer) Read(data []byte) (int, error) {
+	n, addr, err := server.conn.ReadFromUDP(data)
+	server.addr = addr
+	return n, err
+}
+
 // Write 写
-func (server *TunnelUdpServer) Write(data []byte) error {
+func (server *TunnelUdpServer) Write(data []byte) (int, error) {
 	if server.pipe != nil {
-		return nil //透传模式下，直接抛弃
+		return 0, nil //透传模式下，直接抛弃
 	}
-	_, err := server.conn.WriteToUDP(data, server.addr)
-	if err != nil {
-		server.onClose()
-	}
-	return err
+	return server.conn.WriteToUDP(data, server.addr)
 }
 
 func (server *TunnelUdpServer) Pipe(pipe io.ReadWriteCloser) {

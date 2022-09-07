@@ -35,15 +35,14 @@ func (l *ServerUdpTunnel) Close() error {
 }
 
 // Write 写
-func (l *ServerUdpTunnel) Write(data []byte) error {
+func (l *ServerUdpTunnel) Write(data []byte) (int, error) {
 	if !l.running {
-		return errors.New("tunnel closed")
+		return 0, errors.New("tunnel closed")
 	}
 	if l.pipe != nil {
-		return nil //透传模式下，直接抛弃
+		return 0, nil //透传模式下，直接抛弃
 	}
-	_, err := l.conn.WriteToUDP(data, l.addr)
-	return err
+	return l.conn.WriteToUDP(data, l.addr)
 }
 
 func (l *ServerUdpTunnel) Pipe(pipe io.ReadWriteCloser) {
@@ -94,6 +93,4 @@ func (l *ServerUdpTunnel) onData(data []byte) {
 		}
 		l.pipe = nil
 	}
-
-	l.Emit("data", data)
 }

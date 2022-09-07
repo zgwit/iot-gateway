@@ -14,17 +14,16 @@ type Protocol struct {
 
 // Tunnel 通道模型
 type Tunnel struct {
-	Id        uint64          `json:"id"`
-	ServerId  uint64          `json:"server_id" boltholdIndex:"ServerId"`
-	Name      string          `json:"name"`
-	SN        string          `json:"sn" boltholdIndex:"Addr"`
-	Type      string          `json:"type"` //serial tcp-client tcp-server udp-client udp-server server-tcp server-udp
-	Addr      string          `json:"addr"`
-	Remote    string          `json:"remote"`
-	Retry     Retry           `json:"retry"` //重试
-	Heartbeat HeartBeatPacket `json:"heartbeat"`
-	Serial    SerialOptions   `json:"serial"`
-	Protocol  Protocol        `json:"protocol"`
+	Id       uint64        `json:"id"`
+	ServerId uint64        `json:"server_id" boltholdIndex:"ServerId"`
+	Name     string        `json:"name"`
+	SN       string        `json:"sn" boltholdIndex:"Addr"`
+	Type     string        `json:"type"` //serial tcp-client tcp-server udp-client udp-server server-tcp server-udp
+	Addr     string        `json:"addr"`
+	Remote   string        `json:"remote"`
+	Retry    Retry         `json:"retry"` //重试
+	Serial   SerialOptions `json:"serial"`
+	Protocol Protocol      `json:"protocol"`
 	//Devices   []DefaultDevice  `json:"devices"` //默认设备
 	Disabled bool      `json:"disabled"`
 	Last     time.Time `json:"last"`
