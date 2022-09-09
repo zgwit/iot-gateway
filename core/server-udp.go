@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/timshannon/bolthold"
 	"iot-master-gateway/db"
+	"iot-master-gateway/dbus"
 	"iot-master-gateway/model"
-	"iot-master-gateway/mqtt"
 	"net"
 	"time"
 )
@@ -66,11 +66,6 @@ func (server *ServerUDP) Open() error {
 				tnl.onData(data)
 				continue
 			}
-
-			if !server.server.Register.Check(data) {
-				_ = c.Close()
-				continue
-			}
 			sn := string(data)
 			tunnel := model.Tunnel{
 				ServerId: server.server.Id,
@@ -81,7 +76,7 @@ func (server *ServerUDP) Open() error {
 			has := err == bolthold.ErrNotFound
 			//has, err := db.Engine.Where("server_id=?", server.server.Id).And("addr", sn).Get(&tunnel)
 			if err != nil {
-				_ = mqtt.Publish(fmt.Sprintf("server/%d/error", server.server.Id), []byte(err.Error()))
+				_ = dbus.Publish(fmt.Sprintf("server/%d/error", server.server.Id), []byte(err.Error()))
 				continue
 			}
 
@@ -103,10 +98,9 @@ func (server *ServerUDP) Open() error {
 				//_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
 				_ = db.Store().Update(tunnel.Id, &tunnel)
 			}
-			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", server.server.Id), nil)
+			_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", server.server.Id), nil)
 
 			tnl = newServerUdpTunnel(&tunnel, c, addr)
-			tnl.first = !has
 			server.children[tunnel.Id] = tnl
 		}
 

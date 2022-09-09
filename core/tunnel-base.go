@@ -17,7 +17,6 @@ type tunnelBase struct {
 
 	running bool
 	online  bool
-	first   bool
 
 	retry      int
 	retryTimer *time.Timer
@@ -35,10 +34,6 @@ func (l *tunnelBase) Running() bool {
 
 func (l *tunnelBase) Online() bool {
 	return l.online
-}
-
-func (l *tunnelBase) First() bool {
-	return l.first
 }
 
 // Close 关闭

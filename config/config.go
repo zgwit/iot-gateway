@@ -12,7 +12,7 @@ type Configure struct {
 	Node     string   `yaml:"node" json:"node"`
 	Data     string   `yaml:"data" json:"data"`
 	Database Database `yaml:"database" json:"database"`
-	MQTT     MQTT     `yaml:"mqtt" json:"mqtt"`
+	MQTT     MQTT     `yaml:"dbus" json:"dbus"`
 	Log      Log      `yaml:"log" json:"log"`
 }
 

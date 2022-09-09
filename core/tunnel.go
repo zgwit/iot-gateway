@@ -19,8 +19,6 @@ type Tunnel interface {
 
 	Online() bool
 
-	First() bool
-
 	//Pipe 透传
 	Pipe(pipe io.ReadWriteCloser)
 }

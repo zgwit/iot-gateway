@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/jacobsa/go-serial/serial"
 	"iot-master-gateway/db"
+	"iot-master-gateway/dbus"
 	"iot-master-gateway/log"
 	"iot-master-gateway/model"
-	"iot-master-gateway/mqtt"
 	"time"
 )
 
@@ -57,7 +57,7 @@ func (s *TunnelSerial) Open() error {
 	//上线
 	s.tunnel.Last = time.Now()
 	_ = db.Store().Update(s.tunnel.Id, &s.tunnel)
-	_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", s.tunnel.Id), nil)
+	_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", s.tunnel.Id), nil)
 
 	return nil
 }

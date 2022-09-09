@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"iot-master-gateway/db"
+	"iot-master-gateway/dbus"
 	"iot-master-gateway/model"
-	"iot-master-gateway/mqtt"
 	"net"
 	"time"
 )
@@ -54,7 +54,7 @@ func (server *TunnelTcpServer) Open() error {
 			server.tunnel.Last = time.Now()
 			server.tunnel.Remote = conn.RemoteAddr().String()
 			_ = db.Store().Update(server.tunnel.Id, &server.tunnel)
-			_ = mqtt.Publish(fmt.Sprintf("tunnel/%d/online", server.tunnel.Id), nil)
+			_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", server.tunnel.Id), nil)
 
 			server.receive()
 		}

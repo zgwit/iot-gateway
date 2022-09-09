@@ -1,4 +1,4 @@
-package mqtt
+package dbus
 
 import (
 	"encoding/json"
@@ -18,10 +18,10 @@ func Open(cfg config.MQTT) {
 	opts.SetConnectRetry(true)
 	//opts.SetMaxReconnectInterval(time.Minute)
 	opts.SetOnConnectHandler(func(client mqtt.Client) {
-		log.Info("mqtt connected")
+		log.Info("dbus connected")
 	})
 	opts.OnConnectionLost = func(c mqtt.Client, err error) {
-		log.Info("mqtt lost", err.Error())
+		log.Info("dbus lost", err.Error())
 	}
 
 	MQTT = mqtt.NewClient(opts)
@@ -30,25 +30,6 @@ func Open(cfg config.MQTT) {
 type command struct {
 	Id   string
 	Body []byte
-}
-
-func test() {
-
-	request := "gateway/{id}/request/"
-	response := "gateway/{id}/response/"
-	MQTT.Subscribe(request+"#", 0, func(client mqtt.Client, message mqtt.Message) {
-		log.Infof("mqtt api %s", message.Topic())
-		//MQTT.Publish()
-	})
-
-	MQTT.AddRoute(request+"product", func(client mqtt.Client, message mqtt.Message) {
-
-		_ = Publish(response+"product", "")
-	})
-	MQTT.AddRoute(request+"product/list", func(client mqtt.Client, message mqtt.Message) {
-
-	})
-
 }
 
 func Publish(topic string, payload interface{}) (err error) {
