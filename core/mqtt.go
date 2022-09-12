@@ -2,39 +2,113 @@ package core
 
 import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"iot-master-gateway/dbus"
-	"iot-master-gateway/log"
+	"github.com/zgwit/iot-master/pkg/log"
 )
 
-func RegisterHandler() {
+func RegisterGatewayHandler(client mqtt.Client, id string) {
+	//id := config.Config.Node
+	download := "/gateway/" + id + "/download/"
 
-	// gateway/{gid}/download/product/list/{tid...}
-	// gateway/{gid}/response/product/list/{tid...}
-
-	download := "gateway/{id}/download/"
-	//response := "gateway/{id}/response/{tid}"
-	dbus.MQTT.Subscribe(download+"#", 0, func(client mqtt.Client, message mqtt.Message) {
-		log.Infof("dbus api %s", message.Topic())
+	client.Subscribe(download+"#", 0, func(client mqtt.Client, message mqtt.Message) {
+		log.Infof("download %s", message.Topic())
 	})
 
-	dbus.MQTT.AddRoute(download+"tunnel", func(client mqtt.Client, message mqtt.Message) {
+	client.AddRoute(download+"tunnel", func(client mqtt.Client, message mqtt.Message) {
 
 	})
 
-	dbus.MQTT.AddRoute(download+"server", func(client mqtt.Client, message mqtt.Message) {
+	client.AddRoute(download+"server", func(client mqtt.Client, message mqtt.Message) {
 
 	})
 
-	dbus.MQTT.AddRoute(download+"product", func(client mqtt.Client, message mqtt.Message) {
+	client.AddRoute(download+"product", func(client mqtt.Client, message mqtt.Message) {
 
 	})
 
-	dbus.MQTT.AddRoute(download+"device", func(client mqtt.Client, message mqtt.Message) {
+	client.AddRoute(download+"device", func(client mqtt.Client, message mqtt.Message) {
 
 	})
 
-	dbus.MQTT.AddRoute(download+"config", func(client mqtt.Client, message mqtt.Message) {
+	client.AddRoute(download+"config", func(client mqtt.Client, message mqtt.Message) {
 
 	})
 
+	command := "/gateway/" + id + "/command/"
+
+	client.Subscribe(command+"#", 0, func(client mqtt.Client, message mqtt.Message) {
+		log.Infof("command %s", message.Topic())
+	})
+	client.AddRoute(command+"start", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"stop", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"restart", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"status", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+
+}
+
+func RegisterTunnelHandler(client mqtt.Client, id string) {
+	command := "/tunnel/" + id + "/command/"
+
+	client.Subscribe(command+"#", 0, func(client mqtt.Client, message mqtt.Message) {
+		log.Infof("tunnel command %s", message.Topic())
+	})
+	client.AddRoute(command+"start", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"stop", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"restart", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"status", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+}
+
+func RegisterServerHandler(client mqtt.Client, id string) {
+	command := "/server/" + id + "/command/"
+
+	client.Subscribe(command+"#", 0, func(client mqtt.Client, message mqtt.Message) {
+		log.Infof("server command %s", message.Topic())
+	})
+	client.AddRoute(command+"start", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"stop", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"restart", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"status", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+}
+
+func RegisterDeviceHandler(client mqtt.Client, id string) {
+	command := "/device/" + id + "/command/"
+
+	client.Subscribe(command+"#", 0, func(client mqtt.Client, message mqtt.Message) {
+		log.Infof("tunnel command %s", message.Topic())
+	})
+	client.AddRoute(command+"start", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"stop", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"restart", func(client mqtt.Client, message mqtt.Message) {
+
+	})
+	client.AddRoute(command+"status", func(client mqtt.Client, message mqtt.Message) {
+
+	})
 }

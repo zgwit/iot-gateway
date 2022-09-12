@@ -83,9 +83,9 @@ func (client *TunnelClient) receive() {
 
 		data := buf[:n]
 		//过滤心跳包
-		if client.tunnel.Heartbeat.Enable && client.tunnel.Heartbeat.Check(data) {
-			continue
-		}
+		//if client.tunnel.Heartbeat.Enable && client.tunnel.Heartbeat.Check(data) {
+		//	continue
+		//}
 
 		//透传转发
 		if client.pipe != nil {
