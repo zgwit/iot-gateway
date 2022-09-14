@@ -1,19 +1,19 @@
 package config
 
 import (
+	"github.com/zgwit/iot-master/v2/pkg/log"
 	"gopkg.in/yaml.v3"
 	"iot-master-gateway/args"
-	"log"
 	"os"
 )
 
 // Configure 配置
 type Configure struct {
-	Node     string   `yaml:"node" json:"node"`
-	Data     string   `yaml:"data" json:"data"`
-	Database Database `yaml:"database" json:"database"`
-	MQTT     MQTT     `yaml:"dbus" json:"dbus"`
-	Log      Log      `yaml:"log" json:"log"`
+	Node     string      `yaml:"node" json:"node"`
+	Data     string      `yaml:"data" json:"data"`
+	Database Database    `yaml:"database" json:"database"`
+	MQTT     MQTT        `yaml:"dbus" json:"dbus"`
+	Log      log.Options `yaml:"log" json:"log"`
 }
 
 // Config 全局配置

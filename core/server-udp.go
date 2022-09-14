@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/timshannon/bolthold"
+	"github.com/zgwit/iot-master/v2/model"
 	"iot-master-gateway/db"
 	"iot-master-gateway/dbus"
-	"iot-master-gateway/model"
 	"net"
 	"time"
 )
@@ -15,7 +15,7 @@ import (
 type ServerUDP struct {
 	server *model.Server
 
-	children map[uint64]*ServerUdpTunnel
+	children map[string]*ServerUdpTunnel
 	tunnels  map[string]*ServerUdpTunnel
 
 	listener *net.UDPConn
@@ -25,7 +25,7 @@ type ServerUDP struct {
 func newServerUDP(server *model.Server) *ServerUDP {
 	svr := &ServerUDP{
 		server:   server,
-		children: make(map[uint64]*ServerUdpTunnel),
+		children: make(map[string]*ServerUdpTunnel),
 		tunnels:  make(map[string]*ServerUdpTunnel),
 	}
 	return svr
@@ -87,7 +87,6 @@ func (server *ServerUDP) Open() error {
 				tunnel.Type = "server-udp"
 				tunnel.Name = sn
 				tunnel.Name = sn
-				tunnel.SN = sn
 				tunnel.Addr = server.server.Addr
 				tunnel.Protocol = server.server.Protocol
 				//_, _ = db.Engine.InsertOne(&tunnel)
@@ -122,7 +121,7 @@ func (server *ServerUDP) Close() (err error) {
 }
 
 // GetTunnel 获取链接
-func (server *ServerUDP) GetTunnel(id uint64) Tunnel {
+func (server *ServerUDP) GetTunnel(id string) Tunnel {
 	return server.children[id]
 }
 

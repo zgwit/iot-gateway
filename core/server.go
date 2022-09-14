@@ -2,14 +2,14 @@ package core
 
 import (
 	"fmt"
-	"iot-master-gateway/model"
+	"github.com/zgwit/iot-master/v2/model"
 )
 
 // Server 通道
 type Server interface {
 	Open() error
 	Close() error
-	GetTunnel(id uint64) Tunnel
+	GetTunnel(id string) Tunnel
 	Running() bool
 }
 

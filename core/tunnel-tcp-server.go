@@ -3,9 +3,9 @@ package core
 import (
 	"errors"
 	"fmt"
+	"github.com/zgwit/iot-master/v2/model"
 	"iot-master-gateway/db"
 	"iot-master-gateway/dbus"
-	"iot-master-gateway/model"
 	"net"
 	"time"
 )

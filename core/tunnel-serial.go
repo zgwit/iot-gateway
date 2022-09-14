@@ -4,10 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jacobsa/go-serial/serial"
+	"github.com/zgwit/iot-master/v2/model"
+	"github.com/zgwit/iot-master/v2/pkg/log"
 	"iot-master-gateway/db"
 	"iot-master-gateway/dbus"
-	"iot-master-gateway/log"
-	"iot-master-gateway/model"
 	"time"
 )
 

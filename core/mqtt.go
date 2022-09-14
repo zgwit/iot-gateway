@@ -2,7 +2,7 @@ package core
 
 import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/zgwit/iot-master/pkg/log"
+	"github.com/zgwit/iot-master/v2/pkg/log"
 )
 
 func RegisterGatewayHandler(client mqtt.Client, id string) {

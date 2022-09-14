@@ -2,8 +2,8 @@ package core
 
 import (
 	"errors"
+	"github.com/zgwit/iot-master/v2/model"
 	"io"
-	"iot-master-gateway/model"
 	"net"
 )
 

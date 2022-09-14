@@ -2,10 +2,11 @@ package main
 
 import (
 	"github.com/kardianos/service"
+	"github.com/zgwit/iot-master/v2/pkg/log"
 	"iot-master-gateway/args"
 	"iot-master-gateway/config"
 	"iot-master-gateway/db"
-	"iot-master-gateway/log"
+	"iot-master-gateway/dbus"
 	"os"
 	"os/signal"
 	"syscall"
@@ -105,22 +106,20 @@ func originMain() {
 		log.Fatal(err)
 	}
 
-	err = log.Open(&config.Config.Log)
+	err = log.Open(config.Config.Log)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//配置文件存在，说明已经安装
-	if config.Existing() {
-		//加载数据库
-		err = db.Open(&config.Config.Database)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer db.Close()
+	//加载数据库
+	err = db.Open(config.Config.Database)
+	if err != nil {
+		log.Fatal(err)
 	}
+	defer db.Close()
 
-	//判断是否开启Web
+	dbus.Open(config.Config.MQTT)
+
 }
 
 func shutdown() error {

@@ -3,8 +3,8 @@ package dbus
 import (
 	"encoding/json"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/zgwit/iot-master/v2/pkg/log"
 	"iot-master-gateway/config"
-	"iot-master-gateway/log"
 )
 
 var MQTT mqtt.Client

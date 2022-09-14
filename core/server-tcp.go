@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"github.com/timshannon/bolthold"
+	"github.com/zgwit/iot-master/v2/model"
 	"iot-master-gateway/db"
 	"iot-master-gateway/dbus"
-	"iot-master-gateway/model"
 	"net"
 	"time"
 )
@@ -15,7 +15,7 @@ import (
 type ServerTCP struct {
 	server *model.Server
 
-	children map[uint64]*ServerTcpTunnel
+	children map[string]*ServerTcpTunnel
 
 	listener *net.TCPListener
 
@@ -25,7 +25,7 @@ type ServerTCP struct {
 func newServerTCP(server *model.Server) *ServerTCP {
 	svr := &ServerTCP{
 		server:   server,
-		children: make(map[uint64]*ServerTcpTunnel),
+		children: make(map[string]*ServerTcpTunnel),
 	}
 	return svr
 }
@@ -82,7 +82,6 @@ func (server *ServerTCP) Open() error {
 				//保存一条新记录
 				tunnel.Type = "server-tcp"
 				tunnel.Name = sn
-				tunnel.SN = sn
 				tunnel.Addr = server.server.Addr
 				tunnel.Protocol = server.server.Protocol
 				//_, _ = db.Engine.InsertOne(&tunnel)
@@ -118,7 +117,7 @@ func (server *ServerTCP) Close() (err error) {
 }
 
 // GetTunnel 获取连接
-func (server *ServerTCP) GetTunnel(id uint64) Tunnel {
+func (server *ServerTCP) GetTunnel(id string) Tunnel {
 	return server.children[id]
 }
 
