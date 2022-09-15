@@ -84,20 +84,16 @@ func (p *Program) run() {
 	quit := make(chan os.Signal, 2)
 	signal.Notify(quit, os.Interrupt, os.Kill)
 
-	go func() {
-		for {
-			select {
-			case <-hup:
-			case <-quit:
-				//优雅地结束
-				_ = shutdown()
-				//os.Exit(0)
-			}
-		}
-	}()
-
 	//原本的Main函数
 	originMain()
+
+	select {
+	case <-hup:
+	case <-quit:
+		//优雅地结束
+		_ = shutdown()
+		//os.Exit(0)
+	}
 }
 
 func originMain() {
@@ -119,7 +115,6 @@ func originMain() {
 	defer db.Close()
 
 	dbus.Open(config.Config.MQTT)
-
 }
 
 func shutdown() error {
