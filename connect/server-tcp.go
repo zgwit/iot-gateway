@@ -1,4 +1,4 @@
-package core
+package connect
 
 import (
 	"errors"
@@ -11,61 +11,57 @@ import (
 	"time"
 )
 
-// ServerUDP UDP服务器
-type ServerUDP struct {
+// ServerTCP TCP服务器
+type ServerTCP struct {
 	server *model.Server
 
-	children map[string]*ServerUdpTunnel
-	tunnels  map[string]*ServerUdpTunnel
+	children map[string]*ServerTcpTunnel
 
-	listener *net.UDPConn
-	running  bool
+	listener *net.TCPListener
+
+	running bool
 }
 
-func newServerUDP(server *model.Server) *ServerUDP {
-	svr := &ServerUDP{
+func newServerTCP(server *model.Server) *ServerTCP {
+	svr := &ServerTCP{
 		server:   server,
-		children: make(map[string]*ServerUdpTunnel),
-		tunnels:  make(map[string]*ServerUdpTunnel),
+		children: make(map[string]*ServerTcpTunnel),
 	}
 	return svr
 }
 
 // Open 打开
-func (server *ServerUDP) Open() error {
+func (server *ServerTCP) Open() error {
 	if server.running {
 		return errors.New("server is opened")
 	}
 
-	addr, err := net.ResolveUDPAddr("udp", resolvePort(server.server.Addr))
+	addr, err := net.ResolveTCPAddr("tcp", resolvePort(server.server.Addr))
 	if err != nil {
 		return err
 	}
-	c, err := net.ListenUDP("udp", addr)
+	server.listener, err = net.ListenTCP("tcp", addr)
 	if err != nil {
-		//TODO 需要正确处理接收错误
 		return err
 	}
-	server.listener = c //共用连接
 
 	server.running = true
 	go func() {
 		for {
-			buf := make([]byte, 1024)
-			n, addr, err := c.ReadFromUDP(buf)
+			c, err := server.listener.AcceptTCP()
 			if err != nil {
-				_ = c.Close()
-				//continue
+				//TODO 需要正确处理接收错误
 				break
 			}
-			data := buf[:n]
 
-			//如果已经保存了链接 TODO 要有超时处理
-			tnl, ok := server.tunnels[addr.String()]
-			if ok {
-				tnl.onData(data)
+			buf := make([]byte, 128)
+			n := 0
+			n, err = c.Read(buf)
+			if err != nil {
+				_ = c.Close()
 				continue
 			}
+			data := buf[:n]
 			sn := string(data)
 			tunnel := model.Tunnel{
 				ServerId: server.server.Id,
@@ -84,8 +80,7 @@ func (server *ServerUDP) Open() error {
 			tunnel.Remote = c.RemoteAddr().String()
 			if !has {
 				//保存一条新记录
-				tunnel.Type = "server-udp"
-				tunnel.Name = sn
+				tunnel.Type = "server-tcp"
 				tunnel.Name = sn
 				tunnel.Addr = server.server.Addr
 				tunnel.Protocol = server.server.Protocol
@@ -97,9 +92,10 @@ func (server *ServerUDP) Open() error {
 				//_, _ = db.Engine.ID(tunnel.Id).Cols("last", "remote").Update(tunnel)
 				_ = db.Store().Update(tunnel.Id, &tunnel)
 			}
-			_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", server.server.Id), nil)
+			_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", tunnel.Id), nil)
 
-			tnl = newServerUdpTunnel(&tunnel, c, addr)
+			tnl := newServerTcpTunnel(&tunnel, c)
+			go tnl.receive()
 			server.children[tunnel.Id] = tnl
 		}
 
@@ -110,7 +106,7 @@ func (server *ServerUDP) Open() error {
 }
 
 // Close 关闭
-func (server *ServerUDP) Close() (err error) {
+func (server *ServerTCP) Close() (err error) {
 	//close tunnels
 	if server.children != nil {
 		for _, l := range server.children {
@@ -120,11 +116,11 @@ func (server *ServerUDP) Close() (err error) {
 	return server.listener.Close()
 }
 
-// GetTunnel 获取链接
-func (server *ServerUDP) GetTunnel(id string) Tunnel {
+// GetTunnel 获取连接
+func (server *ServerTCP) GetTunnel(id string) Tunnel {
 	return server.children[id]
 }
 
-func (server *ServerUDP) Running() bool {
+func (server *ServerTCP) Running() bool {
 	return server.running
 }
