@@ -51,9 +51,6 @@ func (s *TunnelSerial) Open() error {
 
 	//清空重连计数
 	s.retry = 0
-
-	go s.receive()
-
 	//上线
 	s.tunnel.Last = time.Now()
 	_ = db.Store().Update(s.tunnel.Id, &s.tunnel)
@@ -61,6 +58,7 @@ func (s *TunnelSerial) Open() error {
 
 	return nil
 }
+
 func (s *TunnelSerial) Retry() {
 	retry := &s.tunnel.Retry
 	if retry.Enable && (retry.Maximum == 0 || s.retry < retry.Maximum) {
@@ -73,34 +71,4 @@ func (s *TunnelSerial) Retry() {
 			}
 		})
 	}
-}
-
-func (s *TunnelSerial) receive() {
-	s.running = true
-	s.online = true
-
-	buf := make([]byte, 1024)
-	for {
-		n, err := s.link.Read(buf)
-		if err != nil {
-			s.onClose()
-			break
-		}
-		if n == 0 {
-			continue
-		}
-		//透传转发
-		if s.pipe != nil {
-			_, err = s.pipe.Write(buf[:n])
-			if err != nil {
-				s.pipe = nil
-			} else {
-				continue
-			}
-		}
-	}
-	s.running = false
-	s.online = false
-
-	s.Retry()
 }

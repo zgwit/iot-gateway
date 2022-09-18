@@ -55,47 +55,12 @@ func (server *TunnelTcpServer) Open() error {
 			server.tunnel.Remote = conn.RemoteAddr().String()
 			_ = db.Store().Update(server.tunnel.Id, &server.tunnel)
 			_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", server.tunnel.Id), nil)
-
-			server.receive()
 		}
 
 		server.running = false
 	}()
 
 	return nil
-}
-
-func (server *TunnelTcpServer) receive() {
-	server.online = true
-
-	buf := make([]byte, 1024)
-	for {
-		n, err := server.link.Read(buf)
-		if err != nil {
-			server.onClose()
-			break
-		}
-		if n == 0 {
-			continue
-		}
-
-		data := buf[:n]
-		//过滤心跳包
-		if server.tunnel.Heartbeat.Enable && server.tunnel.Heartbeat.Check(data) {
-			continue
-		}
-
-		//透传转发
-		if server.pipe != nil {
-			_, err = server.pipe.Write(data)
-			if err != nil {
-				server.pipe = nil
-			} else {
-				continue
-			}
-		}
-	}
-	server.online = false
 }
 
 // Close 关闭

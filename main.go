@@ -5,6 +5,7 @@ import (
 	"github.com/zgwit/iot-master/v2/pkg/log"
 	"iot-master-gateway/args"
 	"iot-master-gateway/config"
+	"iot-master-gateway/core"
 	"iot-master-gateway/db"
 	"iot-master-gateway/dbus"
 	"os"
@@ -115,6 +116,8 @@ func originMain() {
 	defer db.Close()
 
 	dbus.Open(config.Config.MQTT)
+
+	core.Open(config.Config.Node)
 }
 
 func shutdown() error {

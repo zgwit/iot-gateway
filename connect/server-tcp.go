@@ -95,7 +95,6 @@ func (server *ServerTCP) Open() error {
 			_ = dbus.Publish(fmt.Sprintf("tunnel/%d/online", tunnel.Id), nil)
 
 			tnl := newServerTcpTunnel(&tunnel, c)
-			go tnl.receive()
 			server.children[tunnel.Id] = tnl
 		}
 

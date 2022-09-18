@@ -18,9 +18,6 @@ type Tunnel interface {
 	Running() bool
 
 	Online() bool
-
-	//Pipe 透传
-	Pipe(pipe io.ReadWriteCloser)
 }
 
 // NewTunnel 创建通道

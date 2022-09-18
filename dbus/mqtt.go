@@ -27,11 +27,6 @@ func Open(cfg config.MQTT) {
 	MQTT = mqtt.NewClient(opts)
 }
 
-type command struct {
-	Id   string
-	Body []byte
-}
-
 func Publish(topic string, payload interface{}) (err error) {
 	switch payload.(type) {
 	case nil:

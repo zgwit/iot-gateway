@@ -39,9 +39,6 @@ func (client *TunnelClient) Open() error {
 	client.retry = 0
 	client.link = conn
 
-	//开始接收数据
-	go client.receive()
-
 	//上线
 	client.tunnel.Last = time.Now()
 	client.tunnel.Remote = conn.LocalAddr().String()
@@ -64,43 +61,6 @@ func (client *TunnelClient) Retry() {
 			}
 		})
 	}
-}
-
-func (client *TunnelClient) receive() {
-	client.running = true
-	client.online = true
-
-	buf := make([]byte, 1024)
-	for {
-		n, err := client.link.Read(buf)
-		if err != nil {
-			client.onClose()
-			break
-		}
-		if n == 0 {
-			continue
-		}
-
-		data := buf[:n]
-		//过滤心跳包
-		//if client.tunnel.Heartbeat.Enable && client.tunnel.Heartbeat.Check(data) {
-		//	continue
-		//}
-
-		//透传转发
-		if client.pipe != nil {
-			_, err = client.pipe.Write(data)
-			if err != nil {
-				client.pipe = nil
-			} else {
-				continue
-			}
-		}
-	}
-	client.running = false
-	client.online = false
-
-	client.Retry()
 }
 
 // Close 关闭
