@@ -5,6 +5,7 @@ import (
 	"github.com/zgwit/iot-master/v2/pkg/log"
 	"iot-master-gateway/connect"
 	"iot-master-gateway/dbus"
+	"time"
 )
 
 type Tunnel struct {
@@ -15,7 +16,11 @@ type Tunnel struct {
 }
 
 func (t *Tunnel) Poll() {
+	//TODO 此处解析地址？
+
 	for {
+		start := time.Now().UnixMilli()
+
 		for _, device := range t.devices {
 			//device.product.Pollers
 			for _, poller := range device.product.pollers {
@@ -35,6 +40,16 @@ func (t *Tunnel) Poll() {
 					log.Error(err)
 				}
 			}
+
+			//TODO 在此处统一上报
+		}
+
+		end := time.Now().UnixMilli()
+
+		//轮询间隔时间，计算
+		remain := 60000 - end + start
+		if remain > 0 {
+			time.Sleep(time.Millisecond * time.Duration(remain))
 		}
 	}
 }
