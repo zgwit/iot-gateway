@@ -7,7 +7,7 @@ require (
 	github.com/jacobsa/go-serial v0.0.0-20180131005756-15cf729a72d4
 	github.com/kardianos/service v1.2.1
 	github.com/timshannon/bolthold v0.0.0-20210913165410-232392fc8a6a
-	github.com/zgwit/go-plc v0.1.1
+	github.com/zgwit/go-plc v0.1.2
 	github.com/zgwit/iot-master/v2 v2.0.2
 	gopkg.in/yaml.v3 v3.0.1
 )
