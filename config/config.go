@@ -4,29 +4,36 @@ import (
 	"github.com/zgwit/iot-master/v2/pkg/log"
 	"gopkg.in/yaml.v3"
 	"iot-master-gateway/args"
+	"iot-master-gateway/db"
+	"iot-master-gateway/dbus"
 	"os"
 )
 
 // Configure 配置
 type Configure struct {
-	Node     string      `yaml:"node" json:"node"`
-	Data     string      `yaml:"data" json:"data"`
-	Database Database    `yaml:"database" json:"database"`
-	MQTT     MQTT        `yaml:"dbus" json:"dbus"`
-	Log      log.Options `yaml:"log" json:"log"`
+	Node     string       `yaml:"node" json:"node"`
+	Data     string       `yaml:"data" json:"data"`
+	Database db.Options   `yaml:"database" json:"database"`
+	MQTT     dbus.Options `yaml:"dbus" json:"dbus"`
+	Log      log.Options  `yaml:"log" json:"log"`
 }
 
 // Config 全局配置
 var Config = Configure{
 	Node:     "root",
 	Data:     "data",
-	Database: DatabaseDefault,
-	MQTT:     MQTTDefault,
-	Log:      LogDefault,
+	Database: db.Default,
+	MQTT:     dbus.Default,
+	Log: log.Options{
+		Level:  "trace",
+		Caller: true,
+		Text:   false,
+	},
 }
 
 func init() {
 	Config.Node, _ = os.Hostname()
+	//TODO imei sn
 }
 
 // Load 加载

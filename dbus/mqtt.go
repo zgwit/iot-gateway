@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/zgwit/iot-master/v2/pkg/log"
-	"iot-master-gateway/config"
 )
 
 var MQTT mqtt.Client
 
-func Open(cfg config.MQTT) {
+func Open(cfg Options) {
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(cfg.Broker)
 	opts.SetClientID(cfg.ClientID)

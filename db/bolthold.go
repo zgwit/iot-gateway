@@ -2,7 +2,6 @@ package db
 
 import (
 	"github.com/timshannon/bolthold"
-	"iot-master-gateway/config"
 	"os"
 	"regexp"
 )
@@ -13,7 +12,7 @@ func Store() *bolthold.Store {
 	return store
 }
 
-func Open(cfg config.Database) (err error) {
+func Open(cfg Options) (err error) {
 	store, err = bolthold.Open(cfg.Path, os.ModePerm, nil)
 	return
 }
