@@ -18,7 +18,7 @@ gitHash=$(git show -s --format=%H)
 buildTime=$(date -d today +"%Y-%m-%d %H:%M:%S")
 
 # -w -s
-ldflags="-X '$pkg/args.Version=$version' \
+ldflags=" -w -s -X '$pkg/args.Version=$version' \
 -X '$pkg/args.gitHash=$gitHash' \
 -X '$pkg/args.buildTime=$buildTime'"
 
@@ -31,7 +31,7 @@ export GOOS=windows
 name="iot-master-gateway-windows-amd64.exe"
 go build -ldflags "$ldflags" -o iot-master-gateway-windows-amd64.exe main.go
 tar -zvcf iot-master-gateway-windows-amd64.tar.gz iot-master-gateway-windows-amd64.exe
-rm iot-master-windows-amd64.exe
+rm iot-master-gateway-windows-amd64.exe
 
 export GOOS=linux
 #CC=gcc

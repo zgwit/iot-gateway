@@ -132,6 +132,9 @@ func loadProduct(product *model.Product) error {
 		Product: product,
 	}
 	Products.Store(product.Id, pro)
+
+	//TODO 找到协议，解析地址
+
 	return nil
 }
 
