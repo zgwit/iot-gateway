@@ -3,10 +3,10 @@ package connect
 import (
 	"errors"
 	"fmt"
+	"github.com/iot-master-contrib/gateway/db"
+	"github.com/iot-master-contrib/gateway/dbus"
 	"github.com/zgwit/iot-master/v2/model"
 	"github.com/zgwit/iot-master/v2/pkg/log"
-	"iot-master-gateway/db"
-	"iot-master-gateway/dbus"
 	"net"
 	"time"
 )

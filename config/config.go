@@ -1,11 +1,11 @@
 package config
 
 import (
+	"github.com/iot-master-contrib/gateway/args"
+	"github.com/iot-master-contrib/gateway/db"
+	"github.com/iot-master-contrib/gateway/dbus"
 	"github.com/zgwit/iot-master/v2/pkg/log"
 	"gopkg.in/yaml.v3"
-	"iot-master-gateway/args"
-	"iot-master-gateway/db"
-	"iot-master-gateway/dbus"
 	"os"
 )
 

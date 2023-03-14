@@ -1,13 +1,13 @@
 package main
 
 import (
+	"github.com/iot-master-contrib/gateway/args"
+	"github.com/iot-master-contrib/gateway/config"
+	"github.com/iot-master-contrib/gateway/core"
+	"github.com/iot-master-contrib/gateway/db"
+	"github.com/iot-master-contrib/gateway/dbus"
 	"github.com/kardianos/service"
 	"github.com/zgwit/iot-master/v2/pkg/log"
-	"iot-master-gateway/args"
-	"iot-master-gateway/config"
-	"iot-master-gateway/core"
-	"iot-master-gateway/db"
-	"iot-master-gateway/dbus"
 	"os"
 	"os/signal"
 	"syscall"
