@@ -1,0 +1,51 @@
+:host {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  // text-align: center;
+}
+
+nz-header {
+  color: white;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  padding: 0 20px 0;
+  justify-content: space-between;
+
+  .title {
+    img {
+      border-radius: 0.3125rem;
+      width: 2rem;
+      height: 2rem;
+      background-color: gray;
+      margin-right: 0.5rem;
+    }
+  }
+
+  .user {
+    font-size: 15px;
+
+    img {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 2px;
+    }
+  }
+}
+
+.main {
+  height: 100%;
+  width: 100%;
+
+  nz-sider {
+    // margin-right: 20px;
+    width: 800px;
+  }
+  nz-content {
+    padding: 5px;
+    height: 100%;
+    overflow: scroll;
+  }
+}

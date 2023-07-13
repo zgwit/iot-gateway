@@ -1,0 +1,73 @@
+<ng-template #extra>
+  <button nz-button (click)="handleCancel()" style="margin-right: 10px">
+    取消
+  </button>
+  <button nz-button nzType="primary" (click)="submit()">
+    <i nz-icon nzType="save" nzTheme="outline"></i>
+    保存
+  </button>
+</ng-template>
+
+<nz-card [nzTitle]="id ? '编辑服务器' : '创建服务器'" [nzExtra]="extra">
+  <form nz-form [formGroup]="validateForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" [nzRequired]="mode==='edit'" nzFor="id">ID</nz-form-label>
+      <nz-form-control [nzSpan]="16" nzErrorTip="id不可为空!">
+        <input nz-input id="id" formControlName="id" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="name">名称</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <input nz-input name="name" formControlName="name" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="desc">描述</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <input nz-input name="desc" formControlName="desc" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="port">端口</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-input-number style="width: auto" formControlName="port" name="port" [nzMin]="1" [nzMax]="65535"
+          [nzStep]="1"></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="poller_period">采集周期</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-input-number formControlName="poller_period"></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="poller_interval">采集间隔</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-input-number formControlName="poller_interval"></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="protocol_name">协议</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-select formControlName="protocol_name">
+          <nz-option nzLabel="Modbus RTU" nzValue="rtu"></nz-option>
+          <nz-option nzLabel="Modbus TCP" nzValue="tcp"></nz-option>
+          <nz-option nzLabel="Parallel TCP" nzValue="parallel-tcp"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="defaults">默认设备</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <app-edit-table formControlName="defaults" [items]="listData"></app-edit-table>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-card>

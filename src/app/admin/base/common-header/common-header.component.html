@@ -1,0 +1,25 @@
+<nz-header>
+    <nz-page-header class="site-page-header" nzBackIcon [nzTitle]="title">
+        <nz-page-header-extra>
+            <nz-space>
+                <app-search-box *nzSpaceItem [placeholder]="title+'id'" (onSearch)="onSearch.emit($event)">
+                </app-search-box>
+                <a *nzSpaceItem download="filename" class="fileButton" [href]="downloadHref">
+                    <i nz-icon nzType="cloud-download"></i>
+                    导出
+                </a>
+                <nz-upload *nzSpaceItem [nzAction]="importHref" [nzHeaders]="{ authorization: 'authorization-text' }"
+                    [nzShowUploadList]="false" (nzChange)="handleChange($event)">
+                    <button nz-button nzType="primary">
+                        <span nz-icon nzType="cloud-upload"></span>
+                        导入
+                    </button>
+                </nz-upload>
+
+                <button *nzSpaceItem nz-button nzType="primary" (click)="onAdd.emit()">
+                    <i nz-icon nzType="plus"></i>新增
+                </button>
+            </nz-space>
+        </nz-page-header-extra>
+    </nz-page-header>
+</nz-header>

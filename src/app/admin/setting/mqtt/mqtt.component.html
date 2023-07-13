@@ -1,0 +1,71 @@
+<ng-template #extra>
+
+    <button nz-button nzType="primary" (click)="submit()">
+      <i nz-icon nzType="save" nzTheme="outline"></i>
+      保存
+    </button>
+  </ng-template>
+  
+  <nz-card  nzTitle ="MQTT" [nzExtra]="extra">
+  
+    <form nz-form [formGroup]="group" (ngSubmit)="submit()" >
+       
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="ClientId">Id</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="ClientIdErrorTpl">
+          <input nz-input name="ClientId"   formControlName="ClientId"/>
+          <ng-template #ClientIdErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">请输入Id!</ng-container> 
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="Url">地址</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="UrlErrorTpl">
+          <input nz-input name="Url" formControlName="Url"/>
+          <ng-template #UrlErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">请输入地址!</ng-container> 
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      
+  <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="Username">用户名</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="nameErrorTpl">
+          <input nz-input  name="Username"  formControlName="Username"/>
+          <ng-template #nameErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">请输入用户名!</ng-container> 
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+  
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"   nzFor="Password">密码</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="PasswordErrorTpl">
+          <input nz-input name="Password"  formControlName="Password"/>
+          <ng-template #PasswordErrorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">请输入密码!</ng-container> 
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+       
+  
+       
+ 
+     
+
+
+
+       
+  
+   
+    </form>
+  
+  </nz-card>
+  

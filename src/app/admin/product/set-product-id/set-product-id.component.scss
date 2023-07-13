@@ -1,0 +1,13 @@
+.set-id-row {
+    margin-bottom: 24px;
+
+    .set-id-label {
+        text-align: right;
+    }
+
+    @media (max-width: 575px) {
+        .set-id-label {
+            text-align: left;
+        }
+    }
+}

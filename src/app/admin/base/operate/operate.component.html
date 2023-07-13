@@ -1,0 +1,24 @@
+<a>
+    <i nz-icon nzType="eye"></i>
+  </a>
+
+  
+  <nz-divider nzType="vertical"></nz-divider>
+  <a (click)="edit()">
+    <i nz-icon nzType="edit"></i>
+  </a>
+  <nz-divider nzType="vertical"></nz-divider>
+
+<a nz-dropdown [nzDropdownMenu]="menu">
+    更多
+    <span nz-icon nzType="down"></span>
+  </a>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu> 
+      <li nz-menu-item  (click)="delete()"><span nz-icon nzType="delete" nzTheme="outline"></span>删除</li>
+      <li nz-menu-item  (click)="disable()"><span nz-icon nzType="exclamation-circle" nzTheme="outline"></span>禁用</li>
+      <li nz-menu-item  (click)="enable()"><span nz-icon nzType="check-circle" nzTheme="outline"></span>启用</li>
+      <li nz-menu-item  (click)="start()"><span nz-icon nzType="retweet" nzTheme="outline"></span>启动</li>
+      <li nz-menu-item  (click)="stop()"><span nz-icon nzType="stop" nzTheme="outline"></span>停止</li>
+    </ul>
+  </nz-dropdown-menu>

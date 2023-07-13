@@ -1,0 +1,56 @@
+<ng-template #extra>
+  <button nz-button (click)="handleCancel()" style="margin-right: 10px">
+    取消
+  </button>
+  <button nz-button nzType="primary" (click)="submit()">
+    <i nz-icon nzType="save" nzTheme="outline"></i>
+    保存
+  </button>
+</ng-template>
+
+<nz-card [nzTitle]="id ? '编辑设备' : '创建设备'" [nzExtra]="extra">
+  <form nz-form [formGroup]="validateForm">
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" [nzRequired]="mode==='edit'" nzFor="id">ID</nz-form-label>
+      <nz-form-control [nzSpan]="16" nzErrorTip="id不可为空!">
+        <input nz-input id="id" formControlName="id" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="name">名称</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <input nz-input name="name" formControlName="name" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="desc">描述</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <input nz-input name="desc" formControlName="desc" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="tunnel_id">通道ID</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <input nz-input name="tunnel_id" formControlName="tunnel_id" />
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="tunnel_id">产品ID</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <app-set-product-id #setProductIdTag></app-set-product-id>
+        <!-- <input nz-input name="product_id" formControlName="product_id" /> -->
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzFor="slave">从站号</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-input-number formControlName="slave"></nz-input-number>
+      </nz-form-control>
+    </nz-form-item>
+
+  </form>
+</nz-card>

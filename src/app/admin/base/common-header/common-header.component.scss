@@ -1,0 +1,28 @@
+  nz-header {
+      background-color: rgb(240, 242, 245);
+      padding-left: 0;
+      padding-right: 0;
+      position: relative;
+
+      nz-page-header-extra {
+          position: absolute;
+          right: 0;
+      }
+  }
+
+  input {
+      height: 100%
+  }
+
+  .fileButton {
+      height: 32px;
+      line-height: 32px;
+      border-radius: 3px;
+      background-color: #1890ff;
+      border-color: #1890ff;
+      color: #fff;
+      font-weight: 400;
+      display: inline-block;
+      padding: 0 15px;
+      cursor: pointer;
+  }

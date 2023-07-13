@@ -1,0 +1,5 @@
+<input nz-input [placeholder]="placeholder" [(ngModel)]="text" style="width:200px;"/>
+<button nz-button nzType="primary" (click)="onSearch.emit(text)">
+    <span nz-icon nzType="search"></span>
+    查询
+</button>

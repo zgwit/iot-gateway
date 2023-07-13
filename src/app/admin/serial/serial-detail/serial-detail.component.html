@@ -1,0 +1,10 @@
+<p>串口详情：{{ data | json }}</p>
+
+<nz-tabset>
+  <nz-tab nzTitle="设备">
+    <app-tunnel-device [tunnel]="id"></app-tunnel-device>
+  </nz-tab>
+  <nz-tab nzTitle="日志">
+    <ng-template nz-tab> </ng-template>
+  </nz-tab>
+</nz-tabset>

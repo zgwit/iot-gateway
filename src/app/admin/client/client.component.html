@@ -1,0 +1,53 @@
+<nz-layout>
+  <app-common-header title="客户端" moduleName="client" (onSearch)="search($event)" (onAdd)="add()" (onLoad)="load()">
+  </app-common-header>
+  <nz-content>
+    <ng-template #totalTemplate let-total>总共 {{ total }} 条</ng-template>
+    <nz-table #basicTable [nzData]="datum" nzShowSizeChanger [nzFrontPagination]="false" [nzShowTotal]="totalTemplate"
+      (nzPageSizeChange)="pageSizeChange($event)" (nzPageIndexChange)="pageIndexChange($event)" [nzPageSize]="pageSize"
+      [nzPageIndex]="pageIndex" [nzTotal]="total" (nzQueryParams)="onQuery($event)">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>名称</th>
+          <th>网络</th>
+          <th>地址</th>
+          <th>端口</th>
+          <th>状态</th>
+          <th>运行</th>
+          <th>创建时间</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data; let i = index" (dblclick)="open(data.id)">
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.net }}</td>
+          <td>{{ data.addr }}</td>
+          <td>{{ data.port }}</td>
+          <td>
+            <nz-tag [nzColor]="data.disabled?'error':'success'">
+              <span>{{ data.disabled?'禁用':'启用' }}</span>
+            </nz-tag>
+          </td>
+          <td>
+            <nz-tag [nzColor]="data.running?'success':'error'">
+              <span>{{ data.running?'启动':'停止' }}</span>
+            </nz-tag>
+          </td>
+
+          <td>{{ data.created }}</td>
+          <td nzRight>
+
+
+
+            <app-operate [url]="'client'" [id]="data.id" (onSend)="load()"></app-operate>
+
+
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-content>
+</nz-layout>
