@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/iot-master-contrib/gateway/connect"
+	"github.com/iot-master-contrib/gateway/internal"
 	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/curd"
 	"github.com/zgwit/iot-master/v3/pkg/db"
@@ -158,7 +158,7 @@ func serverRouter(app *gin.RouterGroup) {
 
 	app.POST("/search", curd.ApiSearchHook[types.Server](func(servers []*types.Server) error {
 		for k, server := range servers {
-			c := connect.GetServer(server.Id)
+			c := internal.GetServer(server.Id)
 			if c != nil {
 				servers[k].Running = c.Running()
 			}
@@ -169,11 +169,11 @@ func serverRouter(app *gin.RouterGroup) {
 	app.GET("/list", curd.ApiList[types.Server]())
 
 	app.POST("/create", curd.ApiCreateHook[types.Server](curd.GenerateRandomId[types.Server](8), func(value *types.Server) error {
-		return connect.LoadServer(value)
+		return internal.LoadServer(value)
 	}))
 
 	app.GET("/:id", curd.ParseParamStringId, curd.ApiGetHook[types.Server](func(server *types.Server) error {
-		c := connect.GetServer(server.Id)
+		c := internal.GetServer(server.Id)
 		if c != nil {
 			server.Running = c.Running()
 		}
@@ -181,24 +181,24 @@ func serverRouter(app *gin.RouterGroup) {
 	}))
 
 	app.POST("/:id", curd.ParseParamStringId, curd.ApiUpdateHook[types.Server](nil, func(value *types.Server) error {
-		c := connect.GetServer(value.Id)
+		c := internal.GetServer(value.Id)
 		err := c.Close()
 		if err != nil {
 			log.Error(err)
 		}
-		return connect.LoadServer(value)
+		return internal.LoadServer(value)
 	},
 		"id", "name", "desc", "heartbeat", "poller_period", "poller_interval", "protocol_name", "protocol_options", "retry", "options", "disabled", "port", "standalone", "servers"))
 
 	app.GET("/:id/delete", curd.ParseParamStringId, curd.ApiDeleteHook[types.Server](nil, func(value interface{}) error {
 		id := value.(string)
-		c := connect.GetServer(id)
+		c := internal.GetServer(id)
 		return c.Close()
 	}))
 
 	app.GET(":id/disable", curd.ParseParamStringId, curd.ApiDisableHook[types.Server](true, nil, func(value interface{}) error {
 		id := value.(string)
-		c := connect.GetServer(id)
+		c := internal.GetServer(id)
 		return c.Close()
 	}))
 
@@ -212,12 +212,12 @@ func serverRouter(app *gin.RouterGroup) {
 		if !has {
 			return fmt.Errorf("找不到 %s", id)
 		}
-		return connect.LoadServer(&m)
+		return internal.LoadServer(&m)
 	}))
 
 	app.GET(":id/start", curd.ParseParamStringId, func(ctx *gin.Context) {
 		id := ctx.GetString("id")
-		c := connect.GetServer(id)
+		c := internal.GetServer(id)
 		if c == nil {
 			curd.Fail(ctx, "找不到连接")
 			return
@@ -232,7 +232,7 @@ func serverRouter(app *gin.RouterGroup) {
 
 	app.GET(":id/stop", curd.ParseParamStringId, func(ctx *gin.Context) {
 		id := ctx.GetString("id")
-		c := connect.GetServer(id)
+		c := internal.GetServer(id)
 		if c == nil {
 			curd.Fail(ctx, "找不到连接")
 			return

@@ -2,7 +2,7 @@ package types
 
 type Serial struct {
 	Tunnel        `xorm:"extends"`
-	Retry         `xorm:"extends"`
+	RetryOptions  `xorm:"extends"`
 	SerialOptions `xorm:"extends"`
 }
 

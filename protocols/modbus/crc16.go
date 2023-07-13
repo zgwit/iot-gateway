@@ -1,4 +1,4 @@
-package internal
+package modbus
 
 // Cyclical Redundancy Checking.
 var (

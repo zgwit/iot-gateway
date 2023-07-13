@@ -1,37 +1,37 @@
-package internal
+package connect
 
 import (
-	"github.com/iot-master-contrib/gateway/define"
 	"io"
 	"sync"
 	"time"
 )
 
 type Messenger struct {
+	Tunnel  Conn
 	Timeout time.Duration
-	mu      sync.Mutex
-	tunnel  define.Conn
+
+	mu sync.Mutex
 }
 
 func (m *Messenger) Ask(request []byte, response []byte) (int, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	//s := bufio.NewReader(m.tunnel)
+	//s := bufio.NewReader(m.Tunnel)
 
 	//先写
-	_, err := m.tunnel.Write(request)
+	_, err := m.Tunnel.Write(request)
 	if err != nil {
 		return 0, err
 	}
 
 	//读超时
-	err = m.tunnel.SetReadTimeout(m.Timeout)
+	err = m.Tunnel.SetReadTimeout(m.Timeout)
 	if err != nil {
 		return 0, err
 	}
 
-	return m.tunnel.Read(response)
+	return m.Tunnel.Read(response)
 }
 
 func (m *Messenger) AskAtLeast(request []byte, response []byte, min int) (int, error) {
@@ -39,18 +39,18 @@ func (m *Messenger) AskAtLeast(request []byte, response []byte, min int) (int, e
 	defer m.mu.Unlock()
 
 	//先写
-	_, err := m.tunnel.Write(request)
+	_, err := m.Tunnel.Write(request)
 	if err != nil {
 		return 0, err
 	}
 
 	//读超时
-	err = m.tunnel.SetReadTimeout(m.Timeout)
+	err = m.Tunnel.SetReadTimeout(m.Timeout)
 	if err != nil {
 		return 0, err
 	}
 
-	return io.ReadAtLeast(m.tunnel, response, min)
+	return io.ReadAtLeast(m.Tunnel, response, min)
 }
 
 func (m *Messenger) Read(response []byte) (int, error) {
@@ -58,12 +58,12 @@ func (m *Messenger) Read(response []byte) (int, error) {
 	defer m.mu.Unlock()
 
 	//读超时
-	err := m.tunnel.SetReadTimeout(m.Timeout)
+	err := m.Tunnel.SetReadTimeout(m.Timeout)
 	if err != nil {
 		return 0, err
 	}
 	//读
-	return m.tunnel.Read(response)
+	return m.Tunnel.Read(response)
 }
 
 func (m *Messenger) ReadAtLeast(response []byte, min int) (int, error) {
@@ -71,10 +71,10 @@ func (m *Messenger) ReadAtLeast(response []byte, min int) (int, error) {
 	defer m.mu.Unlock()
 
 	//读超时
-	err := m.tunnel.SetReadTimeout(m.Timeout)
+	err := m.Tunnel.SetReadTimeout(m.Timeout)
 	if err != nil {
 		return 0, err
 	}
 
-	return io.ReadAtLeast(m.tunnel, response, min)
+	return io.ReadAtLeast(m.Tunnel, response, min)
 }

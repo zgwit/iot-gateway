@@ -13,7 +13,8 @@ type Device struct {
 	TunnelId  string `json:"tunnel_id"`  //通道
 	ProductId string `json:"product_id"` //产品ID
 
-	Slave    uint `json:"slave"` //从站号
+	Station Station `json:"station" xorm:"json"` //从站配置
+
 	Disabled bool `json:"disabled"`
 
 	Online bool `json:"online" xorm:"-"`

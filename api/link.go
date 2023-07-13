@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/iot-master-contrib/gateway/connect"
+	"github.com/iot-master-contrib/gateway/internal"
 	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/curd"
 )
@@ -132,7 +132,7 @@ func linkRouter(app *gin.RouterGroup) {
 	app.POST("/count", curd.ApiCount[types.Link]())
 	app.POST("/search", curd.ApiSearchHook[types.Link](func(links []*types.Link) error {
 		for k, link := range links {
-			c := connect.GetLink(link.Id)
+			c := internal.GetLink(link.Id)
 			if c != nil {
 				links[k].Running = c.Running()
 			}
@@ -142,7 +142,7 @@ func linkRouter(app *gin.RouterGroup) {
 
 	app.GET("/list", curd.ApiList[types.Link]())
 	app.GET("/:id", curd.ParseParamStringId, curd.ApiGetHook[types.Link](func(link *types.Link) error {
-		c := connect.GetLink(link.Id)
+		c := internal.GetLink(link.Id)
 		if c != nil {
 			link.Running = c.Running()
 		}
@@ -155,7 +155,7 @@ func linkRouter(app *gin.RouterGroup) {
 
 	app.GET(":id/disable", curd.ParseParamStringId, curd.ApiDisableHook[types.Link](true, nil, func(value interface{}) error {
 		id := value.(string)
-		c := connect.GetLink(id)
+		c := internal.GetLink(id)
 		return c.Close()
 	}))
 
@@ -163,7 +163,7 @@ func linkRouter(app *gin.RouterGroup) {
 
 	app.GET(":id/stop", curd.ParseParamStringId, func(ctx *gin.Context) {
 		id := ctx.GetString("id")
-		c := connect.GetLink(id)
+		c := internal.GetLink(id)
 		if c == nil {
 			curd.Fail(ctx, "找不到连接")
 			return

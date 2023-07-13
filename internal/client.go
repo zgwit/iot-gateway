@@ -1,9 +1,9 @@
-package connect
+package internal
 
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/modbus/types"
+	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"net"
 	"time"
@@ -33,7 +33,7 @@ func (client *Client) Open() error {
 	conn, err := net.Dial(client.model.Net, addr)
 	if err != nil {
 		client.Retry()
-		//time.AfterFunc(time.Minute, client.Retry)
+		//time.AfterFunc(time.Minute, client.RetryOptions)
 		return err
 	}
 	client.retry = 0
@@ -41,7 +41,7 @@ func (client *Client) Open() error {
 
 	//守护协程
 	go func() {
-		timeout := client.model.RetryTimeout
+		timeout := client.model.Timeout
 		if timeout == 0 {
 			timeout = 10
 		}
@@ -68,10 +68,10 @@ func (client *Client) Open() error {
 
 func (client *Client) Retry() {
 	//重连
-	retry := &client.model.Retry
-	if retry.RetryMaximum == 0 || client.retry < retry.RetryMaximum {
+	retry := &client.model.RetryOptions
+	if retry.Maximum == 0 || client.retry < retry.Maximum {
 		client.retry++
-		timeout := retry.RetryTimeout
+		timeout := retry.Timeout
 		if timeout == 0 {
 			timeout = 10
 		}

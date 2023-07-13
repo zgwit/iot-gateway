@@ -1,25 +1,28 @@
-package internal
+package modbus
 
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/gateway/define"
+	"github.com/iot-master-contrib/gateway/connect"
+	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/bin"
 	"time"
 )
 
 // RTU Modbus-RTU协议
 type RTU struct {
-	messenger Messenger
+	messenger connect.Messenger
 	buf       []byte
 }
 
-func NewRTU(tunnel define.Conn, opts string) *RTU {
-	//TODO parse opts(yaml)
+func NewRTU(tunnel connect.Conn, opts types.Options) *RTU {
 	rtu := &RTU{
-		messenger: Messenger{Timeout: 5 * time.Second, tunnel: tunnel},
+		messenger: connect.Messenger{
+			Timeout: time.Millisecond * time.Duration(opts.Int64("timeout", 1000)),
+			Tunnel:  tunnel,
+		},
 		//slave: opts["slave"].(uint8),
-		buf: make([]byte, 256),
+		buf: make([]byte, opts.Int("buffer", 256)),
 	}
 
 	return rtu
@@ -91,22 +94,23 @@ func (m *RTU) execute(cmd []byte) ([]byte, error) {
 	}
 }
 
-func (m *RTU) Read(slave uint8, code uint8, addr uint16, size uint16) ([]byte, error) {
+func (m *RTU) Read(station types.Station, addr *types.Address, size int) ([]byte, error) {
 	b := make([]byte, 8)
-	b[0] = slave
-	b[1] = code
-	bin.WriteUint16(b[2:], addr)
-	bin.WriteUint16(b[4:], size)
+	b[0] = uint8(station["slave"])
+	b[1] = uint8(addr.Code)
+	bin.WriteUint16(b[2:], uint16(addr.Addr))
+	bin.WriteUint16(b[4:], uint16(size))
 	bin.WriteUint16LittleEndian(b[6:], CRC16(b[:6]))
 
 	return m.execute(b)
 }
 
-func (m *RTU) Write(slave uint8, code uint8, addr uint16, buf []byte) error {
+func (m *RTU) Write(station types.Station, addr *types.Address, buf []byte) error {
 	length := len(buf)
-	//如果是线圈，需要Shrink
-	switch code {
+	var code uint8
+	switch addr.Code {
 	case 1:
+		//如果是线圈，需要Shrink
 		if length == 1 {
 			code = 5
 			//数据 转成 0x0000 0xFF00
@@ -142,12 +146,50 @@ func (m *RTU) Write(slave uint8, code uint8, addr uint16, buf []byte) error {
 
 	l := 6 + len(buf)
 	b := make([]byte, l)
-	b[0] = slave
+	b[0] = uint8(station["slave"])
 	b[1] = code
-	bin.WriteUint16(b[2:], addr)
+	bin.WriteUint16(b[2:], uint16(addr.Addr))
 	copy(b[4:], buf)
 	bin.WriteUint16LittleEndian(b[l-2:], CRC16(b[:l-2]))
 
 	_, err := m.execute(b)
 	return err
+}
+
+func (m *RTU) Poll(station types.Station, mappers []*types.Mapper) (map[string]any, error) {
+	values := make(map[string]any)
+	for _, mapper := range mappers {
+		data, err := m.Read(station, &mapper.Address, mapper.Size)
+		if err != nil {
+			return nil, err
+		}
+		parse(mapper, data, values)
+	}
+	return values, nil
+}
+
+func (m *RTU) Set(station types.Station, mappers []*types.Mapper, name string, value any) error {
+	mapper, point := lookup(mappers, name)
+	if mapper == nil {
+		return errors.New("地址找不到")
+	}
+	data := encode(mapper, point, value)
+	addr := mapper.Address
+	addr.Addr += point.Offset //找到指定位置
+	return m.Write(station, &mapper.Address, data)
+}
+
+func (m *RTU) Get(station types.Station, mappers []*types.Mapper, name string) (any, error) {
+	mapper, _ := lookup(mappers, name)
+	if mapper == nil {
+		return nil, errors.New("地址找不到")
+	}
+	//此处全部读取了，有些冗余
+	data, err := m.Read(station, &mapper.Address, mapper.Size)
+	if err != nil {
+		return nil, err
+	}
+	values := make(map[string]any)
+	parse(mapper, data, values)
+	return values[name], nil
 }

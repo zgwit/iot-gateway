@@ -4,7 +4,6 @@ import (
 	"embed"
 	"encoding/json"
 	"github.com/iot-master-contrib/gateway/api"
-	"github.com/iot-master-contrib/gateway/connect"
 	_ "github.com/iot-master-contrib/gateway/docs"
 	"github.com/iot-master-contrib/gateway/internal"
 	"github.com/iot-master-contrib/gateway/types"
@@ -60,7 +59,7 @@ func Startup(app *web.Engine) error {
 	}
 
 	//连接
-	err = connect.Load()
+	err = internal.Load()
 	if err != nil {
 		log.Fatal(err)
 	}

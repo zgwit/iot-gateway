@@ -3,7 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/iot-master-contrib/gateway/connect"
+	"github.com/iot-master-contrib/gateway/internal"
 	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/curd"
 	"github.com/zgwit/iot-master/v3/pkg/db"
@@ -168,7 +168,7 @@ func serialRouter(app *gin.RouterGroup) {
 
 	app.POST("/search", curd.ApiSearchHook[types.Serial](func(serials []*types.Serial) error {
 		for k, ser := range serials {
-			c := connect.GetSerial(ser.Id)
+			c := internal.GetSerial(ser.Id)
 			if c != nil {
 				serials[k].Running = c.Running()
 			}
@@ -179,11 +179,11 @@ func serialRouter(app *gin.RouterGroup) {
 	app.GET("/list", curd.ApiList[types.Serial]())
 
 	app.POST("/create", curd.ApiCreateHook[types.Serial](curd.GenerateRandomId[types.Serial](8), func(value *types.Serial) error {
-		return connect.LoadSerial(value)
+		return internal.LoadSerial(value)
 	}))
 
 	app.GET("/:id", curd.ParseParamStringId, curd.ApiGetHook[types.Serial](func(ser *types.Serial) error {
-		c := connect.GetSerial(ser.Id)
+		c := internal.GetSerial(ser.Id)
 		if c != nil {
 			ser.Running = c.Running()
 		}
@@ -191,25 +191,25 @@ func serialRouter(app *gin.RouterGroup) {
 	}))
 
 	app.POST("/:id", curd.ParseParamStringId, curd.ApiUpdateHook[types.Serial](nil, func(value *types.Serial) error {
-		c := connect.GetSerial(value.Id)
+		c := internal.GetSerial(value.Id)
 		err := c.Close()
 		if err != nil {
 			log.Error(err)
 		}
-		return connect.LoadSerial(value)
+		return internal.LoadSerial(value)
 	},
 		"id", "name", "desc", "heartbeat", "poller_period", "poller_interval", "protocol_name", "protocol_options",
 		"port_name", "baud_rate", "data_bits", "stop_bits", "parity_mode", "retry_timeout", "retry_maximum", "disabled"))
 
 	app.GET("/:id/delete", curd.ParseParamStringId, curd.ApiDeleteHook[types.Serial](nil, func(value interface{}) error {
 		id := value.(string)
-		c := connect.GetSerial(id)
+		c := internal.GetSerial(id)
 		return c.Close()
 	}))
 
 	app.GET(":id/disable", curd.ParseParamStringId, curd.ApiDisableHook[types.Serial](true, nil, func(value interface{}) error {
 		id := value.(string)
-		c := connect.GetSerial(id)
+		c := internal.GetSerial(id)
 		return c.Close()
 	}))
 
@@ -223,12 +223,12 @@ func serialRouter(app *gin.RouterGroup) {
 		if !has {
 			return fmt.Errorf("找不到 %s", id)
 		}
-		return connect.LoadSerial(&m)
+		return internal.LoadSerial(&m)
 	}))
 
 	app.GET(":id/start", curd.ParseParamStringId, func(ctx *gin.Context) {
 		id := ctx.GetString("id")
-		c := connect.GetSerial(id)
+		c := internal.GetSerial(id)
 		if c == nil {
 			curd.Fail(ctx, "找不到连接")
 			return
@@ -243,7 +243,7 @@ func serialRouter(app *gin.RouterGroup) {
 
 	app.GET(":id/stop", curd.ParseParamStringId, func(ctx *gin.Context) {
 		id := ctx.GetString("id")
-		c := connect.GetSerial(id)
+		c := internal.GetSerial(id)
 		if c == nil {
 			curd.Fail(ctx, "找不到连接")
 			return

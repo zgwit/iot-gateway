@@ -1,22 +1,22 @@
-package internal
+package modbus
 
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/gateway/define"
+	"github.com/iot-master-contrib/gateway/connect"
 	"github.com/zgwit/iot-master/v3/pkg/bin"
 	"time"
 )
 
 // TCP Modbus-TCP协议
 type TCP struct {
-	messenger Messenger
+	messenger connect.Messenger
 	buf       []byte
 }
 
-func NewTCP(tunnel define.Conn, opts string) *TCP {
+func NewTCP(tunnel connect.Conn, opts string) *TCP {
 	tcp := &TCP{
-		messenger: Messenger{Timeout: time.Second, tunnel: tunnel},
+		messenger: connect.Messenger{Timeout: time.Second, Tunnel: tunnel},
 		buf:       make([]byte, 260),
 	}
 	return tcp

@@ -1,10 +1,10 @@
-package connect
+package internal
 
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/modbus/define"
-	"github.com/iot-master-contrib/modbus/types"
+	"github.com/iot-master-contrib/gateway/protocols/define"
+	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"net"

@@ -11,8 +11,8 @@ type Tunnel struct {
 
 	Heartbeat string `json:"heartbeat,omitempty"` //心跳包
 
-	Protocol `xorm:"extends"`
-	Poller   `xorm:"extends"`
+	ProtocolOptions `xorm:"extends"`
+	PollerOptions   `xorm:"extends"`
 
 	Running bool `json:"running,omitempty" xorm:"-"`
 
@@ -20,17 +20,17 @@ type Tunnel struct {
 	Created  time.Time `json:"created" xorm:"created"` //创建时间
 }
 
-type Poller struct {
-	PollerPeriod   uint `json:"poller_period,omitempty"`   //采集周期
-	PollerInterval uint `json:"poller_interval,omitempty"` //采集间隔
+type PollerOptions struct {
+	Period   uint `json:"poller_period,omitempty"`   //采集周期
+	Interval uint `json:"poller_interval,omitempty"` //采集间隔
 }
 
-type Protocol struct {
-	ProtocolName    string `json:"protocol_name,omitempty"`    //协议 rtu tcp parallel-tcp
-	ProtocolOptions string `json:"protocol_options,omitempty"` //协议参数
+type ProtocolOptions struct {
+	Name    string         `json:"protocol_name,omitempty"`    //协议 rtu tcp parallel-tcp
+	Options map[string]any `json:"protocol_options,omitempty"` //协议参数
 }
 
-type Retry struct {
-	RetryTimeout uint `json:"retry_timeout,omitempty"` //重试时间
-	RetryMaximum uint `json:"retry_maximum,omitempty"` //最大次数
+type RetryOptions struct {
+	Timeout uint `json:"retry_timeout,omitempty"` //重试时间
+	Maximum uint `json:"retry_maximum,omitempty"` //最大次数
 }

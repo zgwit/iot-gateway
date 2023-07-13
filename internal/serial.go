@@ -1,8 +1,8 @@
-package connect
+package internal
 
 import (
 	"errors"
-	"github.com/iot-master-contrib/modbus/types"
+	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"go.bug.st/serial"
 	"time"
@@ -56,7 +56,7 @@ func (s *Serial) Open() error {
 
 	//守护协程
 	go func() {
-		timeout := s.model.RetryTimeout
+		timeout := s.model.RetryOptions.Timeout
 		if timeout == 0 {
 			timeout = 10
 		}
@@ -83,10 +83,10 @@ func (s *Serial) Open() error {
 }
 
 func (s *Serial) Retry() {
-	retry := &s.model.Retry
-	if retry.RetryMaximum == 0 || s.retry < retry.RetryMaximum {
+	retry := &s.model.RetryOptions
+	if retry.Maximum == 0 || s.retry < retry.Maximum {
 		s.retry++
-		timeout := retry.RetryTimeout
+		timeout := retry.Timeout
 		if timeout == 0 {
 			timeout = 10
 		}

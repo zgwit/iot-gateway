@@ -1,9 +1,9 @@
-package internal
+package modbus
 
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/gateway/define"
+	"github.com/iot-master-contrib/gateway/connect"
 	"github.com/zgwit/iot-master/v3/pkg/bin"
 	"sync"
 	"time"
@@ -21,14 +21,14 @@ type request struct {
 
 // ParallelTCP Modbus-TCP协议
 type ParallelTCP struct {
-	tunnel define.Conn
+	tunnel connect.Conn
 	queue  chan interface{} //in
 
 	requests  sync.Map
 	increment uint16
 }
 
-func NewParallelTCP(tunnel define.Conn, opts string) *ParallelTCP {
+func NewParallelTCP(tunnel connect.Conn, opts string) *ParallelTCP {
 	concurrency := 10
 
 	tcp := &ParallelTCP{

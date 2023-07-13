@@ -4,7 +4,6 @@ import (
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"github.com/zgwit/iot-master/v3/pkg/mqtt"
-	"github.com/zgwit/iot-master/v3/pkg/oem"
 	"github.com/zgwit/iot-master/v3/pkg/web"
 )
 

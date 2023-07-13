@@ -12,10 +12,10 @@ type Product struct {
 	Name string `json:"name,omitempty"` //名称
 	Desc string `json:"desc,omitempty"` //说明
 	//model.Product `xorm:"extends"`
-	Mappers     []Mapper     `json:"mappers" xorm:"json"`
-	Filters     []Filter     `json:"filters" xorm:"json"`
-	Calculators []Calculator `json:"calculators" xorm:"json"`
-	Created     time.Time    `json:"created" xorm:"created"` //创建时间
+	Mappers     []*Mapper     `json:"mappers" xorm:"json"`
+	Filters     []*Filter     `json:"filters" xorm:"json"`
+	Calculators []*Calculator `json:"calculators" xorm:"json"`
+	Created     time.Time     `json:"created" xorm:"created"` //创建时间
 }
 
 type Filter struct {
@@ -30,17 +30,16 @@ type Calculator struct {
 }
 
 type Mapper struct {
-	Code   uint8   `json:"code"`   //指令
-	Addr   uint16  `json:"addr"`   //地址
-	Size   uint16  `json:"size"`   //长度
-	Points []Point `json:"points"` //数据点
+	Address          //地址
+	Size    int      `json:"size"`   //长度
+	Points  []*Point `json:"points"` //数据点
 }
 
 type Point struct {
 	Name      string  `json:"name"`           //名称
 	Type      string  `json:"type"`           //类型
-	Offset    uint16  `json:"offset"`         //偏移
-	Bits      uint16  `json:"bits,omitempty"` //位，1 2 3...
+	Offset    int     `json:"offset"`         //偏移
+	Bits      int     `json:"bits,omitempty"` //位，1 2 3...
 	BigEndian bool    `json:"be,omitempty"`   //大端模式
 	Rate      float64 `json:"rate,omitempty"` //倍率
 }
@@ -143,12 +142,12 @@ func (m *Mapper) Parse(buf []byte, ret map[string]interface{}) {
 		}
 	}()
 
-	l := uint16(len(buf))
+	l := len(buf)
 
 	//识别位
 	if m.Code == 1 || m.Code == 2 {
 		bytes := bin.ExpandBool(buf, int(m.Size))
-		l = uint16(len(bytes))
+		l = len(bytes)
 		for _, p := range m.Points {
 			offset := p.Offset
 			if offset >= l {

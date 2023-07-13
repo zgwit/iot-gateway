@@ -1,9 +1,9 @@
-package connect
+package internal
 
 import (
 	"errors"
-	"github.com/iot-master-contrib/modbus/define"
-	"github.com/iot-master-contrib/modbus/types"
+	"github.com/iot-master-contrib/gateway/connect"
+	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"io"
 	"sync"
@@ -11,9 +11,9 @@ import (
 )
 
 type tunnelBase struct {
-	define.Conn
+	connect.Conn
 
-	poller define.Poller
+	poller *poller
 
 	lock sync.Mutex
 
@@ -42,7 +42,7 @@ func (l *tunnelBase) Close() error {
 		l.retryTimer.Stop()
 	}
 	if !l.running {
-		return errors.New("tunnel closed")
+		return errors.New("Tunnel closed")
 	}
 
 	l.closed = true
@@ -83,7 +83,8 @@ func (l *tunnelBase) Read(data []byte) (int, error) {
 }
 
 func (l *tunnelBase) start(model *types.Tunnel) (err error) {
-	l.poller, err = define.CreatePoller(l, model.ProtocolName, model.ProtocolOptions)
+
+	l.poller, err = newPoller(l.Conn, model.ProtocolOptions)
 	if err != nil {
 		return
 	}
@@ -121,13 +122,13 @@ func (l *tunnelBase) start(model *types.Tunnel) (err error) {
 
 			//等待时间
 			elapsed := time.Now().Unix() - start
-			if model.PollerPeriod == 0 && elapsed < 1 {
+			if model.Period == 0 && elapsed < 1 {
 				//避免死循环
 				time.Sleep(time.Second)
 			}
 
-			if elapsed < int64(model.PollerPeriod) {
-				time.Sleep(time.Duration(int64(model.PollerPeriod)-elapsed) * time.Second)
+			if elapsed < int64(model.Period) {
+				time.Sleep(time.Duration(int64(model.Period)-elapsed) * time.Second)
 			}
 		}
 

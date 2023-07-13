@@ -1,8 +1,8 @@
-package connect
+package internal
 
 import (
 	"errors"
-	"github.com/iot-master-contrib/modbus/types"
+	"github.com/iot-master-contrib/gateway/types"
 	"net"
 )
 

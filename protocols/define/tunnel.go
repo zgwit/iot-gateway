@@ -1,8 +1,10 @@
 package define
 
+import "github.com/iot-master-contrib/gateway/connect"
+
 // Tunnel 通道
 type Tunnel interface {
-	Conn
+	connect.Conn
 
 	Open() error
 
