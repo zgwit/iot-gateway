@@ -1,0 +1,1943 @@
+basePath: /api/gateway/api/
+definitions:
+  api.ParamSearch:
+    properties:
+      filter:
+        additionalProperties: true
+        type: object
+      keyword:
+        additionalProperties:
+          type: string
+        type: object
+      limit:
+        type: integer
+      skip:
+        type: integer
+      sort:
+        additionalProperties:
+          type: integer
+        type: object
+    type: object
+  api.ReplyData-int64:
+    properties:
+      data:
+        type: integer
+      error:
+        type: string
+    type: object
+  api.ReplyData-string:
+    properties:
+      data:
+        type: string
+      error:
+        type: string
+    type: object
+  api.ReplyData-types_Client:
+    properties:
+      data:
+        $ref: '#/definitions/types.Client'
+      error:
+        type: string
+    type: object
+  api.ReplyData-types_Device:
+    properties:
+      data:
+        $ref: '#/definitions/types.Device'
+      error:
+        type: string
+    type: object
+  api.ReplyData-types_Link:
+    properties:
+      data:
+        $ref: '#/definitions/types.Link'
+      error:
+        type: string
+    type: object
+  api.ReplyData-types_Product:
+    properties:
+      data:
+        $ref: '#/definitions/types.Product'
+      error:
+        type: string
+    type: object
+  api.ReplyData-types_Serial:
+    properties:
+      data:
+        $ref: '#/definitions/types.Serial'
+      error:
+        type: string
+    type: object
+  api.ReplyData-types_Server:
+    properties:
+      data:
+        $ref: '#/definitions/types.Server'
+      error:
+        type: string
+    type: object
+  api.ReplyList-types_Client:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Client'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+  api.ReplyList-types_Device:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Device'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+  api.ReplyList-types_Link:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Link'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+  api.ReplyList-types_Product:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Product'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+  api.ReplyList-types_Serial:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Serial'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+  api.ReplyList-types_Server:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/types.Server'
+        type: array
+      error:
+        type: string
+      total:
+        type: integer
+    type: object
+  types.Calculator:
+    properties:
+      expression:
+        description: 表达式
+        type: string
+      name:
+        description: 赋值
+        type: string
+    type: object
+  types.Client:
+    properties:
+      addr:
+        description: 地址，主机名或IP
+        type: string
+      created:
+        description: 创建时间
+        type: string
+      desc:
+        description: 说明
+        type: string
+      disabled:
+        type: boolean
+      heartbeat:
+        description: 心跳包
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 名称
+        type: string
+      net:
+        description: 类型 tcp udp
+        type: string
+      poller_interval:
+        description: 采集间隔
+        type: integer
+      poller_period:
+        description: 采集周期
+        type: integer
+      port:
+        description: 端口号
+        type: integer
+      protocol_name:
+        description: 协议 rtu tcp parallel-tcp
+        type: string
+      protocol_options:
+        additionalProperties: {}
+        description: 协议参数
+        type: object
+      retry_maximum:
+        description: 最大次数
+        type: integer
+      retry_timeout:
+        description: 重试时间
+        type: integer
+      running:
+        type: boolean
+    type: object
+  types.DefaultDevice:
+    properties:
+      name:
+        description: 名称
+        type: string
+      product_id:
+        description: 产品ID
+        type: string
+      slave:
+        description: 从站号
+        type: integer
+    type: object
+  types.Device:
+    properties:
+      created:
+        type: string
+      desc:
+        description: 说明
+        type: string
+      disabled:
+        type: boolean
+      id:
+        type: string
+      name:
+        description: 名称
+        type: string
+      online:
+        type: boolean
+      product_id:
+        description: 产品ID
+        type: string
+      station:
+        allOf:
+        - $ref: '#/definitions/types.Station'
+        description: 从站配置
+      tunnel_id:
+        description: 通道
+        type: string
+    type: object
+  types.Filter:
+    properties:
+      expression:
+        description: 表达式
+        type: string
+      name:
+        description: 字段
+        type: string
+    type: object
+  types.Link:
+    properties:
+      created:
+        description: 创建时间
+        type: string
+      desc:
+        description: 说明
+        type: string
+      disabled:
+        type: boolean
+      heartbeat:
+        description: 心跳包
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 名称
+        type: string
+      poller_interval:
+        description: 采集间隔
+        type: integer
+      poller_period:
+        description: 采集周期
+        type: integer
+      protocol_name:
+        description: 协议 rtu tcp parallel-tcp
+        type: string
+      protocol_options:
+        additionalProperties: {}
+        description: 协议参数
+        type: object
+      remote:
+        description: 远程地址
+        type: string
+      running:
+        type: boolean
+      server_id:
+        description: 服务器ID
+        type: string
+    type: object
+  types.Mapper:
+    properties:
+      addr:
+        type: integer
+      area:
+        type: integer
+      code:
+        type: integer
+      points:
+        description: 数据点
+        items:
+          $ref: '#/definitions/types.Point'
+        type: array
+      size:
+        description: 长度
+        type: integer
+    type: object
+  types.Point:
+    properties:
+      be:
+        description: 大端模式
+        type: boolean
+      bits:
+        description: 位，1 2 3...
+        type: integer
+      name:
+        description: 名称
+        type: string
+      offset:
+        description: 偏移
+        type: integer
+      rate:
+        description: 倍率
+        type: number
+      type:
+        description: 类型
+        type: string
+    type: object
+  types.Product:
+    properties:
+      calculators:
+        items:
+          $ref: '#/definitions/types.Calculator'
+        type: array
+      created:
+        description: 创建时间
+        type: string
+      desc:
+        description: 说明
+        type: string
+      filters:
+        items:
+          $ref: '#/definitions/types.Filter'
+        type: array
+      id:
+        type: string
+      mappers:
+        description: model.Product `xorm:"extends"`
+        items:
+          $ref: '#/definitions/types.Mapper'
+        type: array
+      name:
+        description: 名称
+        type: string
+    type: object
+  types.Serial:
+    properties:
+      baud_rate:
+        description: 9600 115200
+        type: integer
+      created:
+        description: 创建时间
+        type: string
+      data_bits:
+        description: 5 6 7 8
+        type: integer
+      desc:
+        description: 说明
+        type: string
+      disabled:
+        type: boolean
+      heartbeat:
+        description: 心跳包
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 名称
+        type: string
+      parity_mode:
+        description: 0 1 2 NONE ODD EVEN
+        type: integer
+      poller_interval:
+        description: 采集间隔
+        type: integer
+      poller_period:
+        description: 采集周期
+        type: integer
+      port_name:
+        description: port, e.g. COM1 "/dev/ttySerial1".
+        type: string
+      protocol_name:
+        description: 协议 rtu tcp parallel-tcp
+        type: string
+      protocol_options:
+        additionalProperties: {}
+        description: 协议参数
+        type: object
+      retry_maximum:
+        description: 最大次数
+        type: integer
+      retry_timeout:
+        description: 重试时间
+        type: integer
+      running:
+        type: boolean
+      stop_bits:
+        description: 1 2
+        type: integer
+    type: object
+  types.Server:
+    properties:
+      created:
+        description: 创建时间
+        type: string
+      desc:
+        description: 说明
+        type: string
+      devices:
+        items:
+          $ref: '#/definitions/types.DefaultDevice'
+        type: array
+      disabled:
+        type: boolean
+      heartbeat:
+        description: 心跳包
+        type: string
+      id:
+        description: ID
+        type: string
+      name:
+        description: 名称
+        type: string
+      poller_interval:
+        description: 采集间隔
+        type: integer
+      poller_period:
+        description: 采集周期
+        type: integer
+      port:
+        description: 监听端口
+        type: integer
+      protocol_name:
+        description: 协议 rtu tcp parallel-tcp
+        type: string
+      protocol_options:
+        additionalProperties: {}
+        description: 协议参数
+        type: object
+      running:
+        type: boolean
+      standalone:
+        description: 单例模式（不支持注册）
+        type: boolean
+    type: object
+  types.Station:
+    additionalProperties:
+      type: integer
+    type: object
+info:
+  contact: {}
+  description: API文档
+  title: 物联大师网关接口文档
+  version: 1.0 版本
+paths:
+  /client/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 获取客户端
+      tags:
+      - client
+    post:
+      consumes:
+      - application/json
+      description: 修改客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 客户端信息
+        in: body
+        name: client
+        required: true
+        schema:
+          $ref: '#/definitions/types.Client'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 修改客户端
+      tags:
+      - client
+  /client/{id}/delete:
+    get:
+      consumes:
+      - application/json
+      description: 删除客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 删除客户端
+      tags:
+      - client
+  /client/{id}/disable:
+    get:
+      consumes:
+      - application/json
+      description: 禁用客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 禁用客户端
+      tags:
+      - client
+  /client/{id}/enable:
+    get:
+      consumes:
+      - application/json
+      description: 启用客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 启用客户端
+      tags:
+      - client
+  /client/{id}/start:
+    get:
+      consumes:
+      - application/json
+      description: 启动客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 启动客户端
+      tags:
+      - client
+  /client/{id}/stop:
+    get:
+      consumes:
+      - application/json
+      description: 停止客户端
+      parameters:
+      - description: 客户端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 停止客户端
+      tags:
+      - client
+  /client/count:
+    post:
+      consumes:
+      - application/json
+      description: 查询客户端数量
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 查询客户端数量
+      tags:
+      - client
+  /client/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建客户端
+      parameters:
+      - description: 客户端信息
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/types.Client'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Client'
+      summary: 创建客户端
+      tags:
+      - client
+  /client/export:
+    get:
+      consumes:
+      - application/json
+      description: 导出客户端
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: 导出客户端
+      tags:
+      - product
+  /client/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 导入客户端
+      parameters:
+      - description: 压缩包
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 导入客户端
+      tags:
+      - product
+  /client/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询客户端
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Client'
+      summary: 查询客户端
+      tags:
+      - client
+  /client/search:
+    post:
+      consumes:
+      - application/json
+      description: 查询客户端
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Client'
+      summary: 查询客户端
+      tags:
+      - client
+  /device/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取设备
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Device'
+      summary: 获取设备
+      tags:
+      - device
+    post:
+      consumes:
+      - application/json
+      description: 修改设备
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 设备信息
+        in: body
+        name: device
+        required: true
+        schema:
+          $ref: '#/definitions/types.Device'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Device'
+      summary: 修改设备
+      tags:
+      - device
+  /device/{id}/delete:
+    get:
+      consumes:
+      - application/json
+      description: 删除设备
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Device'
+      summary: 删除设备
+      tags:
+      - device
+  /device/{id}/disable:
+    get:
+      consumes:
+      - application/json
+      description: 禁用设备
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Device'
+      summary: 禁用设备
+      tags:
+      - device
+  /device/{id}/enable:
+    get:
+      consumes:
+      - application/json
+      description: 启用设备
+      parameters:
+      - description: 设备ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Device'
+      summary: 启用设备
+      tags:
+      - device
+  /device/count:
+    post:
+      consumes:
+      - application/json
+      description: 查询设备数量
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 查询设备数量
+      tags:
+      - device
+  /device/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建设备
+      parameters:
+      - description: 设备信息
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/types.Device'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Device'
+      summary: 创建设备
+      tags:
+      - device
+  /device/export:
+    get:
+      consumes:
+      - application/json
+      description: 导出设备
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: 导出设备
+      tags:
+      - product
+  /device/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 导入设备
+      parameters:
+      - description: 压缩包
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 导入设备
+      tags:
+      - product
+  /device/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询设备
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Device'
+      summary: 查询设备
+      tags:
+      - device
+  /device/search:
+    post:
+      consumes:
+      - application/json
+      description: 查询设备
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Device'
+      summary: 查询设备
+      tags:
+      - device
+  /link/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取连接
+      parameters:
+      - description: 连接ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Link'
+      summary: 获取连接
+      tags:
+      - link
+    post:
+      consumes:
+      - application/json
+      description: 修改连接
+      parameters:
+      - description: 连接ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 连接信息
+        in: body
+        name: link
+        required: true
+        schema:
+          $ref: '#/definitions/types.Link'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Link'
+      summary: 修改连接
+      tags:
+      - link
+  /link/{id}/delete:
+    get:
+      consumes:
+      - application/json
+      description: 删除连接
+      parameters:
+      - description: 连接ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Link'
+      summary: 删除连接
+      tags:
+      - link
+  /link/{id}/disable:
+    get:
+      consumes:
+      - application/json
+      description: 禁用连接
+      parameters:
+      - description: 连接ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Link'
+      summary: 禁用连接
+      tags:
+      - link
+  /link/{id}/enable:
+    get:
+      consumes:
+      - application/json
+      description: 启用连接
+      parameters:
+      - description: 连接ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Link'
+      summary: 启用连接
+      tags:
+      - link
+  /link/{id}/stop:
+    get:
+      consumes:
+      - application/json
+      description: 停止连接
+      parameters:
+      - description: 连接ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Link'
+      summary: 停止连接
+      tags:
+      - link
+  /link/count:
+    post:
+      consumes:
+      - application/json
+      description: 查询连接数量
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 查询连接数量
+      tags:
+      - link
+  /link/export:
+    get:
+      consumes:
+      - application/json
+      description: 导出连接
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: 导出连接
+      tags:
+      - product
+  /link/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 导入连接
+      parameters:
+      - description: 压缩包
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 导入连接
+      tags:
+      - product
+  /link/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询连接
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Link'
+      summary: 查询连接
+      tags:
+      - link
+  /link/search:
+    post:
+      consumes:
+      - application/json
+      description: 查询连接
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Link'
+      summary: 查询连接
+      tags:
+      - link
+  /product/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取产品
+      parameters:
+      - description: 产品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Product'
+      summary: 获取产品
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: 修改产品
+      parameters:
+      - description: 产品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 产品信息
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/types.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Product'
+      summary: 修改产品
+      tags:
+      - product
+  /product/{id}/delete:
+    get:
+      consumes:
+      - application/json
+      description: 删除产品
+      parameters:
+      - description: 产品ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Product'
+      summary: 删除产品
+      tags:
+      - product
+  /product/count:
+    post:
+      consumes:
+      - application/json
+      description: 查询产品数量
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 查询产品数量
+      tags:
+      - product
+  /product/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建产品
+      parameters:
+      - description: 产品信息
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/types.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Product'
+      summary: 创建产品
+      tags:
+      - product
+  /product/export:
+    get:
+      consumes:
+      - application/json
+      description: 导出产品
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: 导出产品
+      tags:
+      - product
+  /product/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 导入产品
+      parameters:
+      - description: 压缩包
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 导入产品
+      tags:
+      - product
+  /product/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询产品
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Product'
+      summary: 查询产品
+      tags:
+      - product
+  /product/search:
+    post:
+      consumes:
+      - application/json
+      description: 查询产品
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Product'
+      summary: 查询产品
+      tags:
+      - product
+  /serial/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 获取串口
+      tags:
+      - serial
+    post:
+      consumes:
+      - application/json
+      description: 修改串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 串口信息
+        in: body
+        name: serial
+        required: true
+        schema:
+          $ref: '#/definitions/types.Serial'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 修改串口
+      tags:
+      - serial
+  /serial/{id}/delete:
+    get:
+      consumes:
+      - application/json
+      description: 删除串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 删除串口
+      tags:
+      - serial
+  /serial/{id}/disable:
+    get:
+      consumes:
+      - application/json
+      description: 禁用串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 禁用串口
+      tags:
+      - serial
+  /serial/{id}/enable:
+    get:
+      consumes:
+      - application/json
+      description: 启用串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 启用串口
+      tags:
+      - serial
+  /serial/{id}/start:
+    get:
+      consumes:
+      - application/json
+      description: 启动串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 启动串口
+      tags:
+      - serial
+  /serial/{id}/stop:
+    get:
+      consumes:
+      - application/json
+      description: 停止串口
+      parameters:
+      - description: 串口ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 停止串口
+      tags:
+      - serial
+  /serial/count:
+    post:
+      consumes:
+      - application/json
+      description: 查询串口数量
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 查询串口数量
+      tags:
+      - serial
+  /serial/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建串口
+      parameters:
+      - description: 串口信息
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/types.Serial'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Serial'
+      summary: 创建串口
+      tags:
+      - serial
+  /serial/export:
+    get:
+      consumes:
+      - application/json
+      description: 导出串口
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: 导出串口
+      tags:
+      - product
+  /serial/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 导入串口
+      parameters:
+      - description: 压缩包
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 导入串口
+      tags:
+      - product
+  /serial/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询串口
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Serial'
+      summary: 查询串口
+      tags:
+      - serial
+  /serial/ports:
+    get:
+      description: 串口列表
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-string'
+      summary: 串口列表
+      tags:
+      - serial
+  /serial/search:
+    post:
+      consumes:
+      - application/json
+      description: 查询串口
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Serial'
+      summary: 查询串口
+      tags:
+      - serial
+  /server/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 获取服务器
+      parameters:
+      - description: 服务器ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 获取服务器
+      tags:
+      - server
+    post:
+      consumes:
+      - application/json
+      description: 修改服务器
+      parameters:
+      - description: 服务器ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: 服务器信息
+        in: body
+        name: server
+        required: true
+        schema:
+          $ref: '#/definitions/types.Server'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 修改服务器
+      tags:
+      - server
+  /server/{id}/delete:
+    get:
+      consumes:
+      - application/json
+      description: 删除服务器
+      parameters:
+      - description: 服务器ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 删除服务器
+      tags:
+      - server
+  /server/{id}/disable:
+    get:
+      consumes:
+      - application/json
+      description: 禁用服务器
+      parameters:
+      - description: 服务器ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 禁用服务器
+      tags:
+      - server
+  /server/{id}/enable:
+    get:
+      consumes:
+      - application/json
+      description: 启用服务器
+      parameters:
+      - description: 服务器ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 启用服务器
+      tags:
+      - server
+  /server/{id}/start:
+    get:
+      consumes:
+      - application/json
+      description: 启动服务端
+      parameters:
+      - description: 服务端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 启动服务端
+      tags:
+      - server
+  /server/{id}/stop:
+    get:
+      consumes:
+      - application/json
+      description: 停止服务端
+      parameters:
+      - description: 服务端ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 停止服务端
+      tags:
+      - server
+  /server/count:
+    post:
+      consumes:
+      - application/json
+      description: 查询服务器数量
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 查询服务器数量
+      tags:
+      - server
+  /server/create:
+    post:
+      consumes:
+      - application/json
+      description: 创建服务器
+      parameters:
+      - description: 服务器信息
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/types.Server'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-types_Server'
+      summary: 创建服务器
+      tags:
+      - server
+  /server/export:
+    get:
+      consumes:
+      - application/json
+      description: 导出服务端
+      produces:
+      - application/octet-stream
+      responses: {}
+      summary: 导出服务端
+      tags:
+      - product
+  /server/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 导入服务端
+      parameters:
+      - description: 压缩包
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyData-int64'
+      summary: 导入服务端
+      tags:
+      - product
+  /server/list:
+    get:
+      consumes:
+      - application/json
+      description: 查询服务器
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: skip
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Server'
+      summary: 查询服务器
+      tags:
+      - server
+  /server/search:
+    post:
+      consumes:
+      - application/json
+      description: 查询服务器
+      parameters:
+      - description: 查询参数
+        in: body
+        name: search
+        required: true
+        schema:
+          $ref: '#/definitions/api.ParamSearch'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.ReplyList-types_Server'
+      summary: 查询服务器
+      tags:
+      - server
+swagger: "2.0"

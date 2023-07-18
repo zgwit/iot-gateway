@@ -3,7 +3,7 @@ package internal
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/gateway/protocols/define"
+	"github.com/iot-master-contrib/gateway/connect"
 	"github.com/iot-master-contrib/gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/log"
@@ -145,7 +145,7 @@ func (s *Server) Close() (err error) {
 }
 
 // GetTunnel 获取连接
-func (s *Server) GetTunnel(id string) define.Tunnel {
+func (s *Server) GetTunnel(id string) connect.Tunnel {
 	return s.children[id]
 }
 
