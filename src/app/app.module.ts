@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import {APP_BASE_HREF, registerLocaleData} from '@angular/common';
+import {registerLocaleData} from '@angular/common';
 import zh from '@angular/common/locales/zh';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -124,7 +124,6 @@ registerLocaleData(zh);
         CdkDragHandle
     ],
   providers: [
-    { provide: APP_BASE_HREF, useValue: '/app/gateway/' },
     { provide: NZ_I18N, useValue: zh_CN }
   ],
   bootstrap: [AppComponent]

@@ -1,12 +1,6 @@
 {
-    "/app/gateway/api": {
-        "target": "http://demo.iot-master.com:8080",
-        "secure": false,
-        "logLevel": "debug",
-        "changeOrigin": true
-    },
     "/api": {
-        "target": "http://demo.iot-master.com:8080",
+        "target": "http://localhost:8080",
         "secure": false,
         "logLevel": "debug",
         "changeOrigin": true

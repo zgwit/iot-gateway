@@ -4,7 +4,7 @@ go env -w GOPROXY=https://goproxy.cn,direct
 go env -w GOPRIVATE=*.gitlab.com,*.gitee.com
 go env -w GOSUMDB=off
 
-app="gateway"
+app="iot-gateway"
 version="1.0.0"
 
 npm run build
@@ -25,7 +25,7 @@ ldflags="-X '${pkg}.Version=$version' \
 export GOARCH=amd64
 
 export GOOS=windows
-go build -ldflags "$ldflags" -o gateway.exe cmd/main.go
+go build -ldflags "$ldflags" -o "${app}.exe" cmd/main.go
 
 export GOOS=linux
-go build -ldflags "$ldflags" -o gateway cmd/main.go
+go build -ldflags "$ldflags" -o "${app}" cmd/main.go

@@ -41,7 +41,7 @@ func (client *Client) Open() error {
 
 	//守护协程
 	go func() {
-		timeout := client.model.Timeout
+		timeout := client.model.RetryTimeout
 		if timeout == 0 {
 			timeout = 10
 		}
@@ -69,9 +69,9 @@ func (client *Client) Open() error {
 func (client *Client) Retry() {
 	//重连
 	retry := &client.model.RetryOptions
-	if retry.Maximum == 0 || client.retry < retry.Maximum {
+	if retry.RetryMaximum == 0 || client.retry < retry.RetryMaximum {
 		client.retry++
-		timeout := retry.Timeout
+		timeout := retry.RetryTimeout
 		if timeout == 0 {
 			timeout = 10
 		}

@@ -19,7 +19,7 @@ type poller struct {
 }
 
 func newPoller(tunnel connect.Conn, options types.ProtocolOptions) (*poller, error) {
-	adapter, err := protocols.Create(tunnel, options.Name, options.Options)
+	adapter, err := protocols.Create(tunnel, options.ProtocolName, options.ProtocolOptions)
 	if err != nil {
 		return nil, err
 	}

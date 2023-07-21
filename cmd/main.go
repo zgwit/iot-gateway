@@ -28,11 +28,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	//MQTT总线
-	err = mqtt.Open()
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+
+		//MQTT总线
+		err = mqtt.Open()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	}()
 
 	app := web.CreateEngine()
 

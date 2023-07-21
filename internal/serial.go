@@ -56,7 +56,7 @@ func (s *Serial) Open() error {
 
 	//守护协程
 	go func() {
-		timeout := s.model.RetryOptions.Timeout
+		timeout := s.model.RetryOptions.RetryTimeout
 		if timeout == 0 {
 			timeout = 10
 		}
@@ -84,9 +84,9 @@ func (s *Serial) Open() error {
 
 func (s *Serial) Retry() {
 	retry := &s.model.RetryOptions
-	if retry.Maximum == 0 || s.retry < retry.Maximum {
+	if retry.RetryMaximum == 0 || s.retry < retry.RetryMaximum {
 		s.retry++
-		timeout := retry.Timeout
+		timeout := retry.RetryTimeout
 		if timeout == 0 {
 			timeout = 10
 		}
