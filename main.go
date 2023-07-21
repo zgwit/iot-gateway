@@ -2,34 +2,17 @@ package gateway
 
 import (
 	"embed"
-	"encoding/json"
 	"github.com/zgwit/iot-gateway/api"
 	_ "github.com/zgwit/iot-gateway/docs"
 	"github.com/zgwit/iot-gateway/internal"
 	"github.com/zgwit/iot-gateway/types"
-	"github.com/zgwit/iot-master/v3/model"
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/log"
-	"github.com/zgwit/iot-master/v3/pkg/mqtt"
 	"github.com/zgwit/iot-master/v3/pkg/web"
 	"net/http"
 )
 
-func App() *model.App {
-	return &model.App{
-		Id:   "gateway",
-		Name: "网关",
-		Icon: "/app/gateway/assets/gateway.svg",
-		Entries: []model.AppEntry{{
-			Path: "app/gateway",
-			Name: "网关",
-		}},
-		Type:    "tcp",
-		Address: "http://localhost" + web.GetOptions().Addr,
-	}
-}
-
-//go:embed all:app/gateway
+//go:embed all:www
 var wwwFiles embed.FS
 
 // @title 物联大师网关接口文档
@@ -66,24 +49,17 @@ func Startup(app *web.Engine) error {
 	//defer connect.Close()
 
 	//注册前端接口
-	api.RegisterRoutes(app.Group("/app/gateway/api"))
+	api.RegisterRoutes(app.Group("/api"))
 
 	//注册接口文档
-	web.RegisterSwaggerDocs(app.Group("/app/gateway"), "gateway")
+	web.RegisterSwaggerDocs(&app.RouterGroup, "gateway")
 
 	return nil
 }
 
-func Register() error {
-	payload, _ := json.Marshal(App())
-	token := mqtt.Publish("master/register", payload)
-	token.Wait()
-	return token.Error()
-}
-
 func Static(fs *web.FileSystem) {
 	//前端静态文件
-	fs.Put("/app/gateway", http.FS(wwwFiles), "", "app/gateway/index.html")
+	fs.Put("", http.FS(wwwFiles), "www", "www/index.html")
 }
 
 func Shutdown() error {
