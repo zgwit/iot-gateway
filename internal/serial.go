@@ -2,7 +2,7 @@ package internal
 
 import (
 	"errors"
-	"github.com/iot-master-contrib/gateway/types"
+	"github.com/zgwit/iot-gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"go.bug.st/serial"
 	"time"

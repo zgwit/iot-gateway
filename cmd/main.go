@@ -1,8 +1,7 @@
 package main
 
 import (
-	"github.com/iot-master-contrib/gateway"
-	"github.com/iot-master-contrib/gateway/config"
+	"github.com/zgwit/iot-gateway/config"
 	"github.com/zgwit/iot-master/v3/pkg/banner"
 	"github.com/zgwit/iot-master/v3/pkg/build"
 	"github.com/zgwit/iot-master/v3/pkg/db"

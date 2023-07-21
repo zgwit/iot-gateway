@@ -1,11 +1,10 @@
-module github.com/iot-master-contrib/gateway
+module github.com/zgwit/iot-gateway
 
 go 1.18
 
 require (
 	github.com/PaesslerAG/gval v1.2.2
 	github.com/gin-gonic/gin v1.9.1
-	github.com/iot-master-contrib/modbus v1.1.4
 	github.com/swaggo/swag v1.16.1
 	github.com/zgwit/iot-master/v3 v3.4.8
 	go.bug.st/serial v1.5.0

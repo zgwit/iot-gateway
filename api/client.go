@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/iot-master-contrib/gateway/internal"
-	"github.com/iot-master-contrib/gateway/types"
+	"github.com/zgwit/iot-gateway/internal"
+	"github.com/zgwit/iot-gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/curd"
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/log"

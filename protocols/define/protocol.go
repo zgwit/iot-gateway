@@ -1,8 +1,8 @@
 package define
 
 import (
-	"github.com/iot-master-contrib/gateway/connect"
-	"github.com/iot-master-contrib/gateway/types"
+	"github.com/zgwit/iot-gateway/connect"
+	"github.com/zgwit/iot-gateway/types"
 )
 
 type Factory func(conn connect.Conn, opts map[string]any) Adapter

@@ -1,10 +1,10 @@
 package modbus
 
 import (
-	"github.com/iot-master-contrib/gateway/connect"
-	"github.com/iot-master-contrib/gateway/protocols"
-	"github.com/iot-master-contrib/gateway/protocols/define"
-	"github.com/iot-master-contrib/gateway/types"
+	"github.com/zgwit/iot-gateway/connect"
+	"github.com/zgwit/iot-gateway/protocols"
+	"github.com/zgwit/iot-gateway/protocols/define"
+	"github.com/zgwit/iot-gateway/types"
 )
 
 var code = []types.Code{

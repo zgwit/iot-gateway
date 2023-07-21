@@ -3,8 +3,8 @@ package internal
 import (
 	"errors"
 	"fmt"
-	"github.com/iot-master-contrib/gateway/connect"
-	"github.com/iot-master-contrib/gateway/types"
+	"github.com/zgwit/iot-gateway/connect"
+	"github.com/zgwit/iot-gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/log"
 	"net"

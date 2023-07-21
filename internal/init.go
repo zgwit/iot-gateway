@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"github.com/iot-master-contrib/gateway/types"
+	"github.com/zgwit/iot-gateway/types"
 	"github.com/zgwit/iot-master/v3/pkg/db"
 	"github.com/zgwit/iot-master/v3/pkg/lib"
 	"github.com/zgwit/iot-master/v3/pkg/log"
