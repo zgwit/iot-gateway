@@ -13,7 +13,8 @@ type Station struct {
 }
 
 type Device struct {
-	Id string `json:"id" xorm:"pk"`
+	Id        string `json:"id" xorm:"pk"`
+	ProductId string `json:"product_id"`
 
 	//modbus站号
 	//ModbusStation uint8 `json:"modbus_station,omitempty"`

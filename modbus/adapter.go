@@ -2,10 +2,12 @@ package modbus
 
 import (
 	"errors"
+	"fmt"
 	"github.com/god-jason/bucket/log"
+	"github.com/god-jason/bucket/pool"
 	"github.com/zgwit/iot-gateway/connect"
 	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/device"
+	"github.com/zgwit/iot-gateway/mqtt"
 	"github.com/zgwit/iot-gateway/product"
 	"github.com/zgwit/iot-gateway/types"
 	"slices"
@@ -39,30 +41,20 @@ func (adapter *Adapter) start() error {
 	//}
 
 	for _, d := range adapter.devices {
-
 		//索引
 		adapter.index[d.Id] = d
 
-		//找到设备影子
-		dev, err := device.Ensure(d.Id)
-		if err != nil {
-			log.Error(err)
-			continue
-		}
-
 		//加载映射表
-		d.mapper, err = product.LoadConfig[Mapper](dev.ProductId, "mapper")
+		d.mapper, err = product.LoadConfig[Mapper](d.ProductId, "mapper")
 		if err != nil {
 			log.Error(err)
 		}
 
 		//加载轮询表
-		d.pollers, err = product.LoadConfig[[]*Poller](dev.ProductId, "poller")
+		d.pollers, err = product.LoadConfig[[]*Poller](d.ProductId, "poller")
 		if err != nil {
 			log.Error(err)
 		}
-
-		dev.SetAdapter(adapter)
 	}
 
 	//开始轮询
@@ -91,34 +83,23 @@ func (adapter *Adapter) poll() {
 	for {
 		start := time.Now().UnixMilli()
 		for _, dev := range adapter.devices {
-			d := device.Get(dev.Id)
-			if d == nil {
-				continue
-			}
-
 			values, err := adapter.Sync(dev.Id)
 			if err != nil {
 				log.Error(err)
 				continue
 			}
 
-			//检查连接，若关闭了，就不用再等了
-			if !adapter.tunnel.Running() {
-				break
-			}
-
 			//d := device.Get(dev.Id)
 			if values != nil && len(values) > 0 {
-				log.Trace("sync", dev.Id, dev.Station.Slave, values)
-				d.Push(values)
+				_ = pool.Insert(func() {
+					topic := fmt.Sprintf("device/"+dev.Id+"/values", dev.Id)
+					mqtt.Publish(topic, values)
+				})
 			}
-			//_ = pool.Insert(func() {
-			//topic := fmt.Sprintf("device/%s/property", dev.Id)
-			//mqtt.Publish(topic, values)
 		}
 
 		//检查连接，避免空等待
-		if !adapter.tunnel.Running() {
+		if !adapter.tunnel.Available() {
 			break
 		}
 

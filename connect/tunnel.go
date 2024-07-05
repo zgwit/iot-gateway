@@ -10,5 +10,7 @@ type Tunnel interface {
 
 	Close() error
 
+	Available() bool
+
 	//Online() bool
 }

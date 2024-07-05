@@ -9,6 +9,7 @@ import (
 	"github.com/zgwit/iot-gateway/args"
 	_ "github.com/zgwit/iot-gateway/client"
 	_ "github.com/zgwit/iot-gateway/device"
+	_ "github.com/zgwit/iot-gateway/modbus"
 	_ "github.com/zgwit/iot-gateway/product"
 	_ "github.com/zgwit/iot-gateway/serial"
 	_ "github.com/zgwit/iot-gateway/server"
