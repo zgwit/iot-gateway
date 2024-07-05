@@ -2,21 +2,19 @@ module github.com/zgwit/iot-gateway
 
 go 1.22
 
-toolchain go1.22.2
-
 require (
-	github.com/eclipse/paho.mqtt.golang v1.4.2
+	git.zgwit.com/gateway/dlt645 v0.0.1
+	github.com/eclipse/paho.mqtt.golang v1.4.3
 	github.com/gin-contrib/sessions v1.0.1
 	github.com/gin-gonic/gin v1.10.0
-	github.com/glebarez/go-sqlite v1.21.1
+	github.com/glebarez/go-sqlite v1.22.0
 	github.com/god-jason/bucket v0.0.1
-	github.com/google/uuid v1.4.0
 	github.com/rs/xid v1.5.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/viper v1.19.0
-	go.bug.st/serial v1.5.0
-	xorm.io/builder v0.3.12
-	xorm.io/xorm v1.3.2
+	go.bug.st/serial v1.6.2
+	xorm.io/builder v0.3.13
+	xorm.io/xorm v1.3.9
 )
 
 require (
@@ -39,6 +37,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/pprof v0.0.0-20240625030939-27f56978b8b0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/sessions v1.3.0 // indirect
@@ -53,6 +52,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/panjf2000/ants/v2 v2.10.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
@@ -80,8 +80,8 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	modernc.org/libc v1.24.1 // indirect
+	modernc.org/libc v1.54.2 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
-	modernc.org/memory v1.6.0 // indirect
-	modernc.org/sqlite v1.23.1 // indirect
+	modernc.org/memory v1.8.0 // indirect
+	modernc.org/sqlite v1.30.1 // indirect
 )

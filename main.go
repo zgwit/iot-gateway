@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	_ "git.zgwit.com/gateway/dlt645"
 	"github.com/god-jason/bucket/boot"
 	"github.com/god-jason/bucket/pkg/service"
 	"github.com/god-jason/bucket/web"
