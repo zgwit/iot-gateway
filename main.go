@@ -1,60 +1,67 @@
-package gateway
+package main
 
 import (
 	"embed"
+	"github.com/god-jason/bucket/boot"
+	"github.com/god-jason/bucket/pkg/service"
+	"github.com/god-jason/bucket/web"
 	"github.com/zgwit/iot-gateway/api"
-	_ "github.com/zgwit/iot-gateway/docs"
-	"github.com/zgwit/iot-gateway/internal"
-	"github.com/zgwit/iot-gateway/types"
-	"github.com/zgwit/iot-master/v3/pkg/db"
-	"github.com/zgwit/iot-master/v3/pkg/log"
-	"github.com/zgwit/iot-master/v3/pkg/web"
+	"github.com/zgwit/iot-gateway/args"
+	_ "github.com/zgwit/iot-gateway/client"
+	_ "github.com/zgwit/iot-gateway/device"
+	_ "github.com/zgwit/iot-gateway/product"
+	_ "github.com/zgwit/iot-gateway/serial"
+	_ "github.com/zgwit/iot-gateway/server"
+	"log"
 	"net/http"
 )
 
-//go:embed all:www
+// go: embed all:www
 var wwwFiles embed.FS
 
-// @title 物联大师网关接口文档
-// @version 1.0 版本
-// @description API文档
-// @BasePath /api/gateway/api/
-// @query.collection.format multi
 func main() {
+	args.Parse()
+
+	err := service.Register(Startup, Shutdown)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if args.Uninstall {
+		err = service.Uninstall()
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("卸载服务成功")
+		return
+	}
+
+	if args.Install {
+		err = service.Install()
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("安装服务成功")
+		return
+	}
+
+	err = service.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
-func Startup(app *web.Engine) error {
-
-	//同步表结构
-	err := db.Engine.Sync2(
-		new(types.Client), new(types.Server),
-		new(types.Link), new(types.Serial),
-		new(types.Product), new(types.Device),
-	)
+func Startup() error {
+	err := boot.Startup()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
-
-	//内部加载
-	err = internal.LoadProducts()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	//连接
-	err = internal.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
-	//defer connect.Close()
 
 	//注册前端接口
-	api.RegisterRoutes(app.Group("/api"))
+	api.RegisterRoutes(web.Engine.Group("/api"))
 
-	//注册接口文档
-	web.RegisterSwaggerDocs(&app.RouterGroup, "gateway")
-
-	return nil
+	//阻塞
+	return web.Serve()
 }
 
 func Static(fs *web.FileSystem) {
@@ -63,8 +70,5 @@ func Static(fs *web.FileSystem) {
 }
 
 func Shutdown() error {
-
-	//只关闭Web就行了，其他通过defer关闭
-
-	return nil
+	return boot.Shutdown()
 }

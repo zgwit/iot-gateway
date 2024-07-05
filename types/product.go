@@ -1,9 +1,9 @@
 package types
 
 import (
-	"github.com/zgwit/iot-master/v3/pkg/bin"
-	"github.com/zgwit/iot-master/v3/pkg/convert"
-	"github.com/zgwit/iot-master/v3/pkg/log"
+	"github.com/god-jason/bucket/log"
+	"github.com/god-jason/bucket/pkg/bin"
+	"github.com/god-jason/bucket/pkg/convert"
 	"time"
 )
 

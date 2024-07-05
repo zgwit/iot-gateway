@@ -10,9 +10,5 @@ type Tunnel interface {
 
 	Close() error
 
-	Running() bool
-
-	Closed() bool
-
 	//Online() bool
 }
