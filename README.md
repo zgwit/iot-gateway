@@ -1,6 +1,11 @@
 # iot-gateway
 物联大师网关
 
+[![Go](https://github.com/zgwit/iot-gateway/actions/workflows/go.yml/badge.svg)](https://github.com/zgwit/iot-gateway/actions/workflows/go.yml)
+[![Go](https://github.com/zgwit/iot-gateway/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/zgwit/iot-gateway/actions/workflows/codeql-analysis.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/zgwit/iot-gateway.svg)](https://pkg.go.dev/github.com/zgwit/iot-gateway)
+[![Go Report Card](https://goreportcard.com/badge/github.com/zgwit/iot-gateway)](https://goreportcard.com/report/github.com/zgwit/iot-gateway)
+
 
 ## 协议支持
 
@@ -8,7 +13,7 @@
 - [x] [IP摄像头](https://github.com/iot-master-contrib/camera)
 - [x] [西门子 S7 PLC](https://github.com/iot-master-contrib/s7)
 - [x] [三菱 PLC](https://github.com/iot-master-contrib/melsec)
-- [x] [欧姆龙 PLC](https://github.com/iot-master-contrib/fins)
+- [x] [欧姆龙 PLC](https://github.com/iot-gateway-contrib/fins)
 - [ ] CJ/T188-2004、2018 户用计量仪表数据传输技术条件
 - [x] DL/T645-1997、2007 多功能电表通讯规约
 - [ ] DL/T698.45-2017
