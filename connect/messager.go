@@ -7,7 +7,7 @@ import (
 )
 
 type Messenger struct {
-	Tunnel  Conn
+	Tunnel  Tunnel
 	Timeout time.Duration
 
 	mu sync.Mutex

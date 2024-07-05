@@ -4,9 +4,15 @@ package connect
 type Tunnel interface {
 	Conn
 
+	ID() string
+
 	Open() error
+
+	Close() error
 
 	Running() bool
 
-	Online() bool
+	Closed() bool
+
+	//Online() bool
 }
