@@ -2,6 +2,7 @@
 物联大师网关
 
 [![Go](https://github.com/zgwit/iot-gateway/actions/workflows/go.yml/badge.svg)](https://github.com/zgwit/iot-gateway/actions/workflows/go.yml)
+[![Go](https://github.com/zgwit/iot-gateway/actions/workflows/node.js.yml/badge.svg)](https://github.com/zgwit/iot-gateway/actions/workflows/node.js.yml)
 [![Go](https://github.com/zgwit/iot-gateway/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/zgwit/iot-gateway/actions/workflows/codeql-analysis.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/zgwit/iot-gateway.svg)](https://pkg.go.dev/github.com/zgwit/iot-gateway)
 [![Go Report Card](https://goreportcard.com/badge/github.com/zgwit/iot-gateway)](https://goreportcard.com/report/github.com/zgwit/iot-gateway)
