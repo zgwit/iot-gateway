@@ -12,7 +12,7 @@ func init() {
 		Title:  "数据库配置",
 		Form: []types.SmartField{
 			{
-				Key: "Type", Label: "数据库类型", Type: "select", Default: "sqlite",
+				Key: "Type", Label: "数据库类型", Type: "select", Default: "mysql",
 				Options: []types.SmartSelectOption{
 					{Label: "SQLite（内置）", Value: "sqlite"},
 					{Label: "MySQL", Value: "mysql"},

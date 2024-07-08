@@ -6,6 +6,7 @@ import (
 	"github.com/god-jason/bucket/boot"
 	"github.com/god-jason/bucket/pkg/service"
 	"github.com/god-jason/bucket/web"
+	_ "github.com/zgwit/iot-gateway/admin"
 	"github.com/zgwit/iot-gateway/api"
 	"github.com/zgwit/iot-gateway/args"
 	_ "github.com/zgwit/iot-gateway/client"

@@ -79,9 +79,6 @@ func RegisterRoutes(router *gin.RouterGroup) {
 	//错误恢复，并返回至前端
 	router.Use(catchError)
 
-	router.GET("/oem", oem)
-	router.GET("/info", info)
-
 	//检查 session，必须登录
 	router.Use(mustLogin)
 
@@ -89,9 +86,6 @@ func RegisterRoutes(router *gin.RouterGroup) {
 	for _, a := range apis {
 		router.Handle(a.Method, a.Path, a.Handlers...)
 	}
-
-	//OEM
-	oemRouter(router.Group("/oem"))
 
 	backupRouter(router.Group("/backup"))
 
