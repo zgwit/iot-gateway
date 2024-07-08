@@ -3,6 +3,7 @@ package modbus
 import (
 	"github.com/god-jason/bucket/types"
 	"github.com/zgwit/iot-gateway/connect"
+	"github.com/zgwit/iot-gateway/device"
 	"github.com/zgwit/iot-gateway/protocol"
 )
 
@@ -74,7 +75,9 @@ var modbusRtu = &protocol.Protocol{
 		adapter := &Adapter{
 			tunnel:  conn,
 			modbus:  NewRTU(conn, opts),
-			index:   make(map[string]*Device),
+			index:   make(map[string]*device.Device),
+			mappers: make(map[string]*Mapper),
+			pollers: make(map[string]*[]*Poller),
 			options: opts,
 		}
 		err := adapter.start()
@@ -96,7 +99,9 @@ var modbusTCP = &protocol.Protocol{
 		adapter := &Adapter{
 			tunnel:  conn,
 			modbus:  NewTCP(conn, opts),
-			index:   make(map[string]*Device),
+			index:   make(map[string]*device.Device),
+			mappers: make(map[string]*Mapper),
+			pollers: make(map[string]*[]*Poller),
 			options: opts,
 		}
 		err := adapter.start()

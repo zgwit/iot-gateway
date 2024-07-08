@@ -2,12 +2,11 @@ package modbus
 
 import (
 	"errors"
-	"fmt"
 	"github.com/god-jason/bucket/log"
+	"github.com/god-jason/bucket/pkg/convert"
 	"github.com/god-jason/bucket/pool"
 	"github.com/zgwit/iot-gateway/connect"
-	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/mqtt"
+	"github.com/zgwit/iot-gateway/device"
 	"github.com/zgwit/iot-gateway/product"
 	"github.com/zgwit/iot-gateway/types"
 	"slices"
@@ -15,11 +14,15 @@ import (
 )
 
 type Adapter struct {
-	tunnel  connect.Tunnel
-	modbus  Modbus
-	devices []*Device
+	tunnel connect.Tunnel
+	modbus Modbus
 
-	index map[string]*Device
+	devices []*device.Device
+	index   map[string]*device.Device
+
+	//product_id => xxx
+	mappers map[string]*Mapper
+	pollers map[string]*[]*Poller
 
 	options types.Options
 	//index map[string]*device.Device
@@ -29,9 +32,8 @@ func (adapter *Adapter) Tunnel() connect.Tunnel {
 	return adapter.tunnel
 }
 
-func (adapter *Adapter) start() error {
-	err := db.Engine.Where("tunnel_id=?", adapter.tunnel.ID()).
-		And("disabled!=1").Find(&adapter.devices)
+func (adapter *Adapter) start() (err error) {
+	adapter.devices, err = device.LoadByTunnel(adapter.tunnel.ID())
 	if err != nil {
 		return err
 	}
@@ -45,13 +47,13 @@ func (adapter *Adapter) start() error {
 		adapter.index[d.Id] = d
 
 		//加载映射表
-		d.mapper, err = product.LoadConfig[Mapper](d.ProductId, "mapper")
+		adapter.mappers[d.ProductId], err = product.LoadConfig[Mapper](d.ProductId, "mapper")
 		if err != nil {
 			log.Error(err)
 		}
 
 		//加载轮询表
-		d.pollers, err = product.LoadConfig[[]*Poller](d.ProductId, "poller")
+		adapter.pollers[d.ProductId], err = product.LoadConfig[[]*Poller](d.ProductId, "poller")
 		if err != nil {
 			log.Error(err)
 		}
@@ -92,8 +94,7 @@ func (adapter *Adapter) poll() {
 			//d := device.Get(dev.Id)
 			if values != nil && len(values) > 0 {
 				_ = pool.Insert(func() {
-					topic := fmt.Sprintf("device/"+dev.Id+"/values", dev.Id)
-					mqtt.Publish(topic, values)
+					dev.Push(values)
 				})
 			}
 		}
@@ -127,35 +128,31 @@ func (adapter *Adapter) poll() {
 	//TODO d.SetAdapter(nil)
 }
 
-func (adapter *Adapter) Mount(device string) error {
-	var dev Device
-	has, err := db.Engine.ID(device).Get(&dev)
+func (adapter *Adapter) Mount(id string) error {
+	dev, err := device.Ensure(id)
 	if err != nil {
 		return err
-	}
-	if !has {
-		return errors.New("找不到设备")
 	}
 
 	found := false
 	for i, d := range adapter.devices {
-		if d.Id == device {
-			adapter.devices[i] = &dev
-			adapter.index[device] = &dev
+		if d.Id == id {
+			adapter.devices[i] = dev
+			adapter.index[id] = dev
 			found = true
 		}
 	}
 	if !found {
-		adapter.devices = append(adapter.devices, &dev)
-		adapter.index[device] = &dev
+		adapter.devices = append(adapter.devices, dev)
+		adapter.index[id] = dev
 	}
 	return nil
 }
 
-func (adapter *Adapter) Unmount(device string) error {
-	delete(adapter.index, device)
+func (adapter *Adapter) Unmount(id string) error {
+	delete(adapter.index, id)
 	for i, d := range adapter.devices {
-		if d.Id == device {
+		if d.Id == id {
 			slices.Delete(adapter.devices, i, i+1)
 			return nil
 		}
@@ -165,15 +162,16 @@ func (adapter *Adapter) Unmount(device string) error {
 
 func (adapter *Adapter) Get(id, name string) (any, error) {
 	d := adapter.index[id]
-	station := d.Station.Slave
+	station := d.Station["slave"]
 
-	mapper, code, address := d.mapper.Lookup(name)
+	//todo error
+	mapper, code, address := adapter.mappers[d.ProductId].Lookup(name)
 	if mapper == nil {
 		return nil, errors.New("找不到数据点")
 	}
 
 	//此处全部读取了，有些冗余
-	data, err := adapter.modbus.Read(station, code, address, 2)
+	data, err := adapter.modbus.Read(convert.ToUint8(station), code, address, 2)
 	if err != nil {
 		return nil, err
 	}
@@ -183,9 +181,9 @@ func (adapter *Adapter) Get(id, name string) (any, error) {
 
 func (adapter *Adapter) Set(id, name string, value any) error {
 	d := adapter.index[id]
-	station := d.Station.Slave
+	station := d.Station["slave"]
 
-	mapper, code, address := d.mapper.Lookup(name)
+	mapper, code, address := adapter.mappers[d.ProductId].Lookup(name)
 	if mapper == nil {
 		return errors.New("地址找不到")
 	}
@@ -194,25 +192,25 @@ func (adapter *Adapter) Set(id, name string, value any) error {
 	if err != nil {
 		return err
 	}
-	return adapter.modbus.Write(station, code, address, data)
+	return adapter.modbus.Write(convert.ToUint8(station), code, address, data)
 }
 
 func (adapter *Adapter) Sync(id string) (map[string]any, error) {
 	d := adapter.index[id]
-	station := d.Station.Slave
+	station := convert.ToUint8(d.Station["slave"])
 
 	//没有地址表和轮询器，则跳过
-	if d.pollers == nil || d.mapper == nil {
-		return nil, nil
-	}
+	//if d.pollers == nil || d.mappers == nil {
+	//	return nil, nil
+	//}
 
 	values := make(map[string]any)
-	for _, poller := range *d.pollers {
+	for _, poller := range *adapter.pollers[d.ProductId] {
 		data, err := adapter.modbus.Read(station, poller.Code, poller.Address, poller.Length)
 		if err != nil {
 			return nil, err
 		}
-		err = poller.Parse(d.mapper, data, values)
+		err = poller.Parse(adapter.mappers[d.ProductId], data, values)
 		if err != nil {
 			return nil, err
 		}

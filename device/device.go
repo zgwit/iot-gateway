@@ -2,8 +2,8 @@ package device
 
 import (
 	"errors"
-	"github.com/god-jason/bucket/pkg/event"
 	"github.com/zgwit/iot-gateway/db"
+	"github.com/zgwit/iot-gateway/mqtt"
 	"github.com/zgwit/iot-gateway/protocol"
 	"time"
 )
@@ -17,9 +17,6 @@ type Device struct {
 
 	ProductId string `json:"product_id,omitempty" xorm:"index"`
 	Product   string `json:"product,omitempty" xorm:"<-"`
-
-	ProjectId string `json:"project_id,omitempty" xorm:"index"`
-	Project   string `json:"project,omitempty" xorm:"<-"`
 
 	Name        string         `json:"name"`
 	Description string         `json:"description,omitempty"`
@@ -37,18 +34,7 @@ type Device struct {
 	values map[string]any
 	//last   time.Time
 
-	//事件监听
-	eventData event.Emitter[map[string]any]
-
 	adapter protocol.Adapter
-}
-
-func (d *Device) Watch(fn func(map[string]any)) int {
-	return d.eventData.On(fn)
-}
-
-func (d *Device) UnWatch(handler int) {
-	d.eventData.Off(handler)
 }
 
 func (d *Device) Values() map[string]any {
@@ -56,9 +42,6 @@ func (d *Device) Values() map[string]any {
 }
 
 func (d *Device) Push(values map[string]any) {
-
-	//广播
-	d.eventData.Emit(values)
 
 	//赋值
 	if d.values == nil {
@@ -68,8 +51,9 @@ func (d *Device) Push(values map[string]any) {
 		d.values[k] = v
 	}
 
-	//检查数据
-	//d.Validate()
+	topic := "up/device/" + d.Id + "/values"
+	mqtt.Publish(topic, values)
+	//todo 上传失败，保存历史
 }
 
 func (d *Device) Write(point string, value any) error {

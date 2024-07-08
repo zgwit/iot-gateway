@@ -8,8 +8,6 @@ import (
 	"github.com/god-jason/bucket/pool"
 )
 
-var CustomOpenConnectionFn paho.OpenConnectionFunc
-
 var Client paho.Client
 
 func Startup() error {
@@ -27,10 +25,6 @@ func Startup() error {
 	//重连时，恢复订阅
 	opts.SetCleanSession(false)
 	opts.SetResumeSubs(true)
-
-	if CustomOpenConnectionFn != nil {
-		opts.SetCustomOpenConnectionFn(CustomOpenConnectionFn)
-	}
 
 	//加上订阅处理
 	opts.SetOnConnectHandler(func(client paho.Client) {
@@ -58,23 +52,6 @@ func Startup() error {
 func Shutdown() error {
 	Client.Disconnect(0)
 	return nil
-}
-
-func OpenBy(fn paho.OpenConnectionFunc) paho.Token {
-	//client := Server.NewClient(nil, "internal", "internal", true)
-	opts := paho.NewClientOptions()
-	opts.AddBroker(":1883")
-	opts.SetClientID("internal")
-
-	//重连时，恢复订阅
-	opts.SetCleanSession(false)
-	opts.SetResumeSubs(true)
-
-	//使用虚拟连接
-	opts.SetCustomOpenConnectionFn(fn)
-
-	Client = paho.NewClient(opts)
-	return Client.Connect()
 }
 
 func Publish(topic string, payload any) paho.Token {
