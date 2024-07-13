@@ -6,17 +6,18 @@ import (
 	"github.com/god-jason/bucket/pkg/calc"
 	"github.com/god-jason/bucket/types"
 	"strings"
+	"time"
 )
 
 type Executor struct {
-	Point string `json:"point,omitempty"`
-	Value any    `json:"value,omitempty"`
-	Delay int64  `json:"delay,omitempty"` //ms
+	Point string        `json:"point,omitempty"`
+	Value any           `json:"value,omitempty"`
+	Delay time.Duration `json:"delay,omitempty"` //延迟 ms
 
 	_value gval.Evaluable
 }
 
-type Operator struct {
+type Action struct {
 	Name       string              `json:"name"`
 	Label      string              `json:"label"`
 	Parameters []*types.SmartField `json:"parameters,omitempty"`
@@ -24,7 +25,7 @@ type Operator struct {
 	Executors  []*Executor         `json:"executors,omitempty"`
 }
 
-func (a *Operator) Init() (err error) {
+func (a *Action) Init() (err error) {
 	for _, e := range a.Executors {
 		if str, ok := e.Value.(string); ok {
 			if expr, has := strings.CutPrefix(str, "="); has {
@@ -38,7 +39,7 @@ func (a *Operator) Init() (err error) {
 	return nil
 }
 
-func (a *Operator) GetExecutors(args any) (es []*Executor, err error) {
+func (a *Action) GetExecutors(args any) (es []*Executor, err error) {
 	for _, e := range a.Executors {
 		ee := *e
 		if e._value != nil {

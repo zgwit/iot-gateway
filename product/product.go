@@ -20,7 +20,7 @@ type Product struct {
 	Keywords    []string  `json:"keywords,omitempty"`    //关键字
 	Created     time.Time `json:"created" xorm:"created"`
 
-	operators []*base.Operator
+	operators []*base.Action
 }
 
 func (p *Product) Init() error {

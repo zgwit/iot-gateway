@@ -39,18 +39,18 @@ type Device struct {
 
 	adapter protocol.Adapter
 
-	operators map[string]*base.Operator
+	actions map[string]*base.Action
 }
 
 func (d *Device) Open() error {
-	operators, err := product.LoadConfig[[]*base.Operator](d.ProductId, "operators")
+	operators, err := product.LoadConfig[[]*base.Action](d.ProductId, "actions")
 	if err != nil {
 		return err
 	}
 
-	d.operators = make(map[string]*base.Operator)
+	d.actions = make(map[string]*base.Action)
 	for _, op := range *operators {
-		d.operators[op.Name] = op
+		d.actions[op.Name] = op
 		err = op.Init()
 		if err != nil {
 			return err
@@ -103,20 +103,26 @@ func (d *Device) SetAdapter(adapter protocol.Adapter) {
 }
 
 func (d *Device) Action(name string, values map[string]any) (map[string]any, error) {
-	oper := d.operators[name]
-	if oper == nil {
+	action := d.actions[name]
+	if action == nil {
 		return nil, exception.New("找不到操作")
 	}
 
-	executors, err := oper.GetExecutors(values)
+	executors, err := action.GetExecutors(values)
 	if err != nil {
 		return nil, err
 	}
 
 	for _, executor := range executors {
-		err = d.Write(executor.Point, executor.Value)
-		if err != nil {
-			return nil, err
+		if executor.Delay > 0 {
+			time.AfterFunc(executor.Delay*time.Millisecond, func() {
+				_ = d.Write(executor.Point, executor.Value)
+			})
+		} else {
+			err = d.Write(executor.Point, executor.Value)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 
