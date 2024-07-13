@@ -5,10 +5,10 @@ import (
 	"github.com/god-jason/bucket/log"
 	"github.com/god-jason/bucket/pkg/convert"
 	"github.com/god-jason/bucket/pool"
+	"github.com/god-jason/bucket/types"
 	"github.com/zgwit/iot-gateway/connect"
 	"github.com/zgwit/iot-gateway/device"
 	"github.com/zgwit/iot-gateway/product"
-	"github.com/zgwit/iot-gateway/types"
 	"slices"
 	"time"
 )

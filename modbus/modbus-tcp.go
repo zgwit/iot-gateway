@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/god-jason/bucket/pkg/bin"
+	"github.com/god-jason/bucket/types"
 	"github.com/zgwit/iot-gateway/connect"
-	"github.com/zgwit/iot-gateway/types"
 	"time"
 )
 
