@@ -3,7 +3,7 @@ package device
 import "github.com/god-jason/bucket/boot"
 
 func init() {
-	boot.Register("mqtt", &boot.Task{
+	boot.Register("device", &boot.Task{
 		Startup:  Startup,
 		Shutdown: Shutdown,
 		Depends:  []string{"config", "mqtt"},
@@ -11,6 +11,10 @@ func init() {
 }
 
 func Startup() error {
+
+	//
+	subscribe()
+
 	return nil
 }
 

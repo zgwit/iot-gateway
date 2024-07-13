@@ -2,8 +2,11 @@ package device
 
 import (
 	"errors"
+	"github.com/god-jason/bucket/pkg/exception"
+	"github.com/zgwit/iot-gateway/base"
 	"github.com/zgwit/iot-gateway/db"
 	"github.com/zgwit/iot-gateway/mqtt"
+	"github.com/zgwit/iot-gateway/product"
 	"github.com/zgwit/iot-gateway/protocol"
 	"time"
 )
@@ -35,6 +38,25 @@ type Device struct {
 	//last   time.Time
 
 	adapter protocol.Adapter
+
+	operators map[string]*base.Operator
+}
+
+func (d *Device) Open() error {
+	operators, err := product.LoadConfig[[]*base.Operator](d.ProductId, "operators")
+	if err != nil {
+		return err
+	}
+
+	d.operators = make(map[string]*base.Operator)
+	for _, op := range *operators {
+		d.operators[op.Name] = op
+		err = op.Init()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (d *Device) Values() map[string]any {
@@ -51,7 +73,7 @@ func (d *Device) Push(values map[string]any) {
 		d.values[k] = v
 	}
 
-	topic := "up/device/" + d.Id + "/values"
+	topic := "up/device/" + d.Id + "/property"
 	mqtt.Publish(topic, values)
 	//todo 上传失败，保存历史
 }
@@ -80,36 +102,25 @@ func (d *Device) SetAdapter(adapter protocol.Adapter) {
 	d.adapter = adapter //TODO 会内存泄露，需要手动清空
 }
 
-//func (d *Device) Validate() {
-//	for _, v := range d.validators {
-//		ret := v.Validate(d.values)
-//		if !ret {
-//			//检查结果为真时，才产生报警
-//			continue
-//		}
-//
-//		//入库
-//		al := alarm.Alarm{
-//			ProductId: d.ProductId,
-//			Product:   d.Product,
-//			DeviceId:  d.Id,
-//			Device:    d.Name,
-//			Type:      v.Type,
-//			Title:     v.Title,
-//			Level:     v.Level,
-//			Message:   v.Template, //TODO 模板格式化
-//		}
-//		_, err := db.Engine.Insert(&al)
-//		if err != nil {
-//			log.Error(err)
-//			//continue
-//		}
-//
-//		//通知
-//		//err = internal.notify(&al)
-//		//if err != nil {
-//		//	log.Error(err)
-//		//	//continue
-//		//}
-//	}
-//}
+func (d *Device) Action(name string, values map[string]any) (map[string]any, error) {
+	oper := d.operators[name]
+	if oper == nil {
+		return nil, exception.New("找不到操作")
+	}
+
+	executors, err := oper.GetExecutors(values)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, executor := range executors {
+		err = d.Write(executor.Point, executor.Value)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	//todo 取返回值
+
+	return nil, nil
+}

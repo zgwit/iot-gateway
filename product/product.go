@@ -1,6 +1,7 @@
 package product
 
 import (
+	"github.com/zgwit/iot-gateway/base"
 	"github.com/zgwit/iot-gateway/db"
 	"time"
 )
@@ -18,4 +19,16 @@ type Product struct {
 	Description string    `json:"description,omitempty"` //说明
 	Keywords    []string  `json:"keywords,omitempty"`    //关键字
 	Created     time.Time `json:"created" xorm:"created"`
+
+	operators []*base.Operator
+}
+
+func (p *Product) Init() error {
+	for _, a := range p.operators {
+		err := a.Init()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

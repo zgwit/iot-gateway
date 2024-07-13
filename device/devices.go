@@ -19,7 +19,7 @@ func Load(device *Device) error {
 	if dev != nil {
 		//dev.Destroy()
 	}
-	return nil
+	return device.Open()
 }
 
 func LoadByTunnel(id string) (devices []*Device, err error) {
