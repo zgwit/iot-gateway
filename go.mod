@@ -7,7 +7,7 @@ require (
 	github.com/gin-contrib/sessions v1.0.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-sql-driver/mysql v1.8.1
-	github.com/god-jason/bucket v0.0.3
+	github.com/god-jason/bucket v0.0.4
 	github.com/rs/xid v1.5.0
 	github.com/segmentio/ksuid v1.0.4
 	github.com/spf13/viper v1.19.0
