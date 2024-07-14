@@ -209,9 +209,9 @@ func (l *Tunnel) Pipe(pipe io.ReadWriteCloser) {
 	//go io.Copy(l.conn, pipe)
 }
 
-func (l *Tunnel) Start(conn connect.Tunnel) (err error) {
+func (l *Tunnel) Start() (err error) {
 	//加载协议
-	l.Adapter, err = protocol.Create(conn, l.ProtocolName, l.ProtocolOptions)
+	l.Adapter, err = protocol.Create(l.Conn, l.ProtocolName, l.ProtocolOptions)
 	if err != nil {
 		return err
 	}

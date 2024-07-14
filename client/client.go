@@ -47,5 +47,5 @@ func (c *Client) Open() error {
 
 	c.Conn = &connect.NetConn{Conn: conn}
 
-	return c.Start(c)
+	return c.Start()
 }

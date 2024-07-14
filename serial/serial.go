@@ -57,5 +57,5 @@ func (s *Serial) Open() error {
 
 	s.Conn = port
 
-	return s.Start(s)
+	return s.Start()
 }

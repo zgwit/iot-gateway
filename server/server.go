@@ -54,7 +54,7 @@ func (s *Server) handleSingle(c *net.TCPConn) (err error) {
 	//以ServerID保存
 	links.Store(s.Id, l)
 
-	return l.Start(l)
+	return l.Start()
 }
 
 func (s *Server) handleIncoming(c *net.TCPConn) error {
@@ -125,7 +125,7 @@ func (s *Server) handleRegister(c *net.TCPConn) error {
 	s.children[sn] = &l
 	links.Store(l.Id, &l)
 
-	return l.Start(&l)
+	return l.Start()
 }
 
 // Open 打开
