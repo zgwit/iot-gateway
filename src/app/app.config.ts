@@ -45,6 +45,7 @@ import {
     VideoCameraOutline,
 } from '@ant-design/icons-angular/icons';
 import {provideEcharts} from "ngx-echarts";
+import {HttpClientModule, provideHttpClient} from "@angular/common/http";
 
 registerLocaleData(zh);
 
@@ -87,7 +88,7 @@ export const appConfig: ApplicationConfig = {
     providers: [
         provideRouter(routes),
         provideNzI18n(zh_CN),
-        importProvidersFrom(FormsModule),
+        provideHttpClient(),
         provideAnimations(),
         provideEcharts(),
         {provide: NZ_ICONS, useValue: icons},
