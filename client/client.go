@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/god-jason/bucket/log"
+	"github.com/zgwit/iot-gateway/connect"
 	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/gateway"
 	"github.com/zgwit/iot-gateway/protocol"
+	"github.com/zgwit/iot-gateway/tunnel"
 	"net"
 )
 
@@ -16,7 +17,7 @@ func init() {
 
 // Client 网络链接
 type Client struct {
-	gateway.Base `xorm:"extends"`
+	tunnel.Tunnel `xorm:"extends"`
 
 	Net  string `json:"net,omitempty"`  //类型 tcp udp
 	Addr string `json:"addr,omitempty"` //地址，主机名或IP
@@ -45,10 +46,16 @@ func (c *Client) Open() error {
 	c.Running = true
 	c.Status = "正常"
 
-	c.Conn = &gateway.NetConn{Conn: conn}
+	c.Conn = &connect.NetConn{Conn: conn}
+
+	//加载协议
+	c.Adapter, err = protocol.Create(c, c.ProtocolName, c.ProtocolOptions)
+	if err != nil {
+		return err
+	}
 
 	//启动轮询
-	c.Adapter, err = protocol.Create(c, c.ProtocolName, c.ProtocolOptions)
+	go c.Poll()
 
-	return err
+	return nil
 }

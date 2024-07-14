@@ -4,8 +4,8 @@ import (
 	"errors"
 	"github.com/god-jason/bucket/log"
 	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/gateway"
 	"github.com/zgwit/iot-gateway/protocol"
+	"github.com/zgwit/iot-gateway/tunnel"
 	"go.bug.st/serial"
 	"time"
 )
@@ -16,7 +16,7 @@ func init() {
 
 // Serial 串口
 type Serial struct {
-	gateway.Base `xorm:"extends"`
+	tunnel.Tunnel `xorm:"extends"`
 
 	PortName   string `json:"port_name,omitempty"`   //port, e.g. COM1 "/dev/ttySerial1".
 	BaudRate   uint   `json:"baud_rate,omitempty"`   //9600 115200
@@ -60,5 +60,12 @@ func (s *Serial) Open() error {
 
 	//启动轮询
 	s.Adapter, err = protocol.Create(s, s.ProtocolName, s.ProtocolOptions)
-	return err
+	if err != nil {
+		return err
+	}
+
+	//启动轮询
+	go s.Poll()
+
+	return nil
 }

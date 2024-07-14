@@ -28,7 +28,7 @@ func Register(proto *Protocol) {
 
 func Create(conn connect.Tunnel, name string, opts map[string]any) (Adapter, error) {
 	if p, ok := protocols[name]; ok {
-		return p.Factory(conn, opts)
+		return p.Factory(conn, opts), nil
 	}
 	return nil, fmt.Errorf("协议 %s 找不到", name)
 }

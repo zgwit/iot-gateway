@@ -1,9 +1,12 @@
-package gateway
+package tunnel
 
 import (
 	"errors"
 	"github.com/god-jason/bucket/log"
+	"github.com/god-jason/bucket/pool"
+	"github.com/god-jason/bucket/types"
 	"github.com/zgwit/iot-gateway/connect"
+	"github.com/zgwit/iot-gateway/device"
 	"github.com/zgwit/iot-gateway/protocol"
 	"go.bug.st/serial"
 	"io"
@@ -26,15 +29,15 @@ type RetryOptions struct {
 	RetryMaximum uint `json:"retry_maximum,omitempty"` //最大次数
 }
 
-type Base struct {
+type Tunnel struct {
 	Id          string `json:"id,omitempty" xorm:"pk"` //ID
 	Name        string `json:"name,omitempty"`         //名称
 	Description string `json:"description,omitempty"`  //说明
 	Heartbeat   string `json:"heartbeat,omitempty"`    //心跳包
 
 	//协议
-	ProtocolName    string         `json:"protocol_name,omitempty"`
-	ProtocolOptions map[string]any `json:"protocol_options,omitempty"`
+	ProtocolName    string        `json:"protocol_name,omitempty"`
+	ProtocolOptions types.Options `json:"protocol_options,omitempty"`
 
 	Disabled bool      `json:"disabled"`
 	Created  time.Time `json:"created" xorm:"created"` //创建时间
@@ -48,6 +51,9 @@ type Base struct {
 
 	Adapter protocol.Adapter `json:"-" xorm:"-"`
 
+	//设备
+	devices []*device.Device
+
 	//透传
 	pipe io.ReadWriteCloser
 
@@ -55,15 +61,15 @@ type Base struct {
 	keeping bool
 }
 
-func (l *Base) ID() string {
+func (l *Tunnel) ID() string {
 	return l.Id
 }
 
-func (l *Base) Available() bool {
+func (l *Tunnel) Available() bool {
 	return l.Running
 }
 
-func (l *Base) Keep(open func() error) {
+func (l *Tunnel) Keep(open func() error) {
 	if l.keeping {
 		return
 	}
@@ -91,7 +97,7 @@ func (l *Base) Keep(open func() error) {
 }
 
 // Close 关闭
-func (l *Base) Close() error {
+func (l *Tunnel) Close() error {
 	if l.Closed {
 		return errors.New("tunnel is closed")
 	}
@@ -108,7 +114,7 @@ func (l *Base) Close() error {
 }
 
 // Write 写
-func (l *Base) Write(data []byte) (int, error) {
+func (l *Tunnel) Write(data []byte) (int, error) {
 	if !l.Running {
 		return 0, errors.New("tunnel closed")
 	}
@@ -127,7 +133,7 @@ func (l *Base) Write(data []byte) (int, error) {
 }
 
 // Read 读
-func (l *Base) Read(data []byte) (int, error) {
+func (l *Tunnel) Read(data []byte) (int, error) {
 	if !l.Running {
 		return 0, errors.New("tunnel closed")
 	}
@@ -165,11 +171,11 @@ func (l *Base) Read(data []byte) (int, error) {
 	return n, err
 }
 
-func (l *Base) SetReadTimeout(t time.Duration) error {
+func (l *Tunnel) SetReadTimeout(t time.Duration) error {
 	return l.Conn.SetReadTimeout(t)
 }
 
-func (l *Base) Pipe(pipe io.ReadWriteCloser) {
+func (l *Tunnel) Pipe(pipe io.ReadWriteCloser) {
 	//关闭之前的透传
 	if l.pipe != nil {
 		_ = l.pipe.Close()
@@ -205,4 +211,68 @@ func (l *Base) Pipe(pipe io.ReadWriteCloser) {
 	//TODO 使用io.copy
 	//go io.Copy(pipe, l.conn)
 	//go io.Copy(l.conn, pipe)
+}
+
+func (l *Tunnel) Poll() {
+
+	//设备上线
+	//!!! 不能这样做，不然启动服务器会产生大量的消息
+	//for _, dev := range adapter.index {
+	//	topic := fmt.Sprintf("device/online/%s", dev.Id)
+	//	_ = mqtt.Publish(topic, nil)
+	//}
+
+	interval := l.ProtocolOptions.Int64("poller_interval", 60) //默认1分钟轮询一次
+	if interval < 1 {
+		interval = 1
+	}
+
+	//按毫秒计时
+	interval *= 1000
+
+	//OUT:
+	for {
+		start := time.Now().UnixMilli()
+		for _, dev := range l.devices {
+			values, err := l.Adapter.Sync(dev.Id)
+			if err != nil {
+				log.Error(err)
+				continue
+			}
+
+			//d := device.Get(dev.Id)
+			if values != nil && len(values) > 0 {
+				_ = pool.Insert(func() {
+					dev.Push(values)
+				})
+			}
+		}
+
+		//检查连接，避免空等待
+		if !l.Running {
+			break
+		}
+
+		//轮询间隔
+		now := time.Now().UnixMilli()
+		elapsed := now - start
+		if elapsed < interval {
+			time.Sleep(time.Millisecond * time.Duration(interval-elapsed))
+		}
+
+		//避免空转，睡眠1分钟（延迟10ms太长，睡1分钟也有点长）
+		if elapsed < 10 {
+			time.Sleep(time.Minute)
+		}
+	}
+
+	log.Info("modbus adapter quit", l.Id)
+
+	//设备下线
+	//for _, dev := range adapter.devices {
+	//	topic := fmt.Sprintf("device/%s/offline", dev.Id)
+	//	_ = mqtt.Publish(topic, nil)
+	//}
+
+	//TODO d.SetAdapter(nil)
 }

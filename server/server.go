@@ -4,9 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/god-jason/bucket/log"
+	"github.com/zgwit/iot-gateway/connect"
 	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/gateway"
 	"github.com/zgwit/iot-gateway/protocol"
+	"github.com/zgwit/iot-gateway/tunnel"
 	"net"
 	"regexp"
 )
@@ -22,7 +23,7 @@ func init() {
 
 // Server TCP服务器
 type Server struct {
-	gateway.Base `xorm:"extends"`
+	tunnel.Tunnel `xorm:"extends"`
 
 	Port uint16 `json:"port,omitempty"` //监听端口
 	//Standalone bool   `json:"standalone,omitempty"` //单例模式（不支持注册）
@@ -41,13 +42,13 @@ func (s *Server) handleSingle(c *net.TCPConn) (err error) {
 	}
 
 	l := &Link{
-		Base:     s.Base, //TODO 删除lock
+		Tunnel:   s.Tunnel, //TODO 删除lock
 		ServerId: s.Id,
 		Remote:   c.RemoteAddr().String(),
 	}
 	l.Running = true
 	l.Status = "正常"
-	l.Conn = &gateway.NetConn{c}
+	l.Conn = &connect.NetConn{c}
 
 	s.children[k] = l
 	//以ServerID保存
@@ -55,20 +56,27 @@ func (s *Server) handleSingle(c *net.TCPConn) (err error) {
 
 	//启动轮询
 	l.Adapter, err = protocol.Create(l, l.ProtocolName, l.ProtocolOptions)
-	return err
+	if err != nil {
+		return err
+	}
+
+	//启动轮询
+	go l.Poll()
+
+	return nil
 }
 
 func (s *Server) handleIncoming(c *net.TCPConn) error {
 	var err error
 	l := &Link{
-		Base:     s.Base,
+		Tunnel:   s.Tunnel,
 		ServerId: s.Id,
 		Remote:   c.RemoteAddr().String(),
 	}
 
 	l.Running = true
 	l.Status = "正常"
-	l.Conn = &gateway.NetConn{Conn: c}
+	l.Conn = &connect.NetConn{Conn: c}
 
 	s.Adapter, err = protocol.Create(l, s.ProtocolName, s.ProtocolOptions)
 	return err
@@ -105,7 +113,7 @@ func (s *Server) handleRegister(c *net.TCPConn) error {
 
 	if !get {
 		l = Link{
-			Base:     s.Base,
+			Tunnel:   s.Tunnel,
 			ServerId: s.Id,
 			Remote:   c.RemoteAddr().String(),
 		}
@@ -121,7 +129,7 @@ func (s *Server) handleRegister(c *net.TCPConn) error {
 
 	l.Running = true
 	l.Status = "正常"
-	l.Conn = &gateway.NetConn{c}
+	l.Conn = &connect.NetConn{c}
 
 	s.children[sn] = &l
 	links.Store(l.Id, &l)

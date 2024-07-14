@@ -3,6 +3,7 @@ package device
 import (
 	"errors"
 	"github.com/god-jason/bucket/pkg/exception"
+	"github.com/god-jason/bucket/types"
 	"github.com/zgwit/iot-gateway/base"
 	"github.com/zgwit/iot-gateway/db"
 	"github.com/zgwit/iot-gateway/mqtt"
@@ -30,8 +31,8 @@ type Device struct {
 	Online bool `json:"online,omitempty" xorm:"-"`
 
 	//通道ID
-	TunnelId string         `json:"tunnel_id,omitempty" xorm:"index"`
-	Station  map[string]any `json:"station,omitempty" xorm:"json"` //通道参数 保存从站号等
+	TunnelId string        `json:"tunnel_id,omitempty" xorm:"index"`
+	Station  types.Options `json:"station,omitempty" xorm:"json"` //通道参数 保存从站号等
 
 	//变量
 	values map[string]any

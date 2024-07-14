@@ -3,7 +3,6 @@ package modbus
 import (
 	"github.com/god-jason/bucket/types"
 	"github.com/zgwit/iot-gateway/connect"
-	"github.com/zgwit/iot-gateway/device"
 	"github.com/zgwit/iot-gateway/protocol"
 )
 
@@ -71,20 +70,15 @@ var stationForm = []types.SmartField{
 var modbusRtu = &protocol.Protocol{
 	Name:  "modbus-rtu",
 	Label: "Modbus RTU",
-	Factory: func(conn connect.Tunnel, opts map[string]any) (protocol.Adapter, error) {
-		adapter := &Adapter{
-			tunnel:  conn,
-			modbus:  NewRTU(conn, opts),
-			index:   make(map[string]*device.Device),
-			mappers: make(map[string]*Mapper),
-			pollers: make(map[string]*[]*Poller),
-			options: opts,
+	Factory: func(conn connect.Tunnel, opts map[string]any) protocol.Adapter {
+		return &Adapter{
+			tunnel:   conn,
+			modbus:   NewRTU(conn, opts),
+			devices:  make(map[string]string),
+			stations: make(map[string]types.Options),
+			mappers:  make(map[string]*Mapper),
+			pollers:  make(map[string]*[]*Poller),
 		}
-		err := adapter.start()
-		if err != nil {
-			return nil, err
-		}
-		return adapter, nil
 	},
 	OptionForm:  optionForm,
 	MapperForm:  mapperForm,
@@ -95,20 +89,15 @@ var modbusRtu = &protocol.Protocol{
 var modbusTCP = &protocol.Protocol{
 	Name:  "modbus-tcp",
 	Label: "Modbus TCP",
-	Factory: func(conn connect.Tunnel, opts map[string]any) (protocol.Adapter, error) {
-		adapter := &Adapter{
-			tunnel:  conn,
-			modbus:  NewTCP(conn, opts),
-			index:   make(map[string]*device.Device),
-			mappers: make(map[string]*Mapper),
-			pollers: make(map[string]*[]*Poller),
-			options: opts,
+	Factory: func(conn connect.Tunnel, opts map[string]any) protocol.Adapter {
+		return &Adapter{
+			tunnel:   conn,
+			modbus:   NewTCP(conn, opts),
+			devices:  make(map[string]string),
+			stations: make(map[string]types.Options),
+			mappers:  make(map[string]*Mapper),
+			pollers:  make(map[string]*[]*Poller),
 		}
-		err := adapter.start()
-		if err != nil {
-			return nil, err
-		}
-		return adapter, nil
 	},
 	OptionForm:  optionForm,
 	StationForm: stationForm,

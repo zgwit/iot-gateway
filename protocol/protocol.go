@@ -5,7 +5,7 @@ import (
 	"github.com/zgwit/iot-gateway/connect"
 )
 
-type Factory func(conn connect.Tunnel, opts map[string]any) (Adapter, error)
+type Factory func(conn connect.Tunnel, opts map[string]any) Adapter
 
 type Protocol struct {
 	Name    string  `json:"name"`
