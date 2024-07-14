@@ -4,15 +4,21 @@ import (
 	"github.com/god-jason/bucket/types"
 )
 
+// Adapter 设备驱动
 type Adapter interface {
-	//Tunnel() connect.Tunnel
 
-	//设备动态添加
-	Mount(device string, product string, station types.Options) error
-	Unmount(device string) error
+	//Mount 挂载设备
+	Mount(deviceId string, productId string, station types.Options) error
 
-	//设备数据操作
-	Get(device, point string) (any, error)
-	Set(device, point string, value any) error
-	Sync(device string) (map[string]any, error)
+	//Unmount 卸载设备
+	Unmount(deviceId string) error
+
+	//Get 读数据
+	Get(deviceId, point string) (any, error)
+
+	//Set 写数据
+	Set(deviceId, point string, value any) error
+
+	//Poll 读取所有数据
+	Poll(deviceId string) (map[string]any, error)
 }

@@ -256,7 +256,7 @@ func (l *Tunnel) Poll() {
 	for {
 		start := time.Now().UnixMilli()
 		for _, dev := range l.devices {
-			values, err := l.Adapter.Sync(dev.Id)
+			values, err := l.Adapter.Poll(dev.Id)
 			if err != nil {
 				log.Error(err)
 				continue

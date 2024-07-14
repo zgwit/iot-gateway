@@ -18,18 +18,18 @@ type Adapter struct {
 	pollers map[string]*[]*Poller
 }
 
-func (adapter *Adapter) Mount(id string, product_id string, station types.Options) (err error) {
-	adapter.devices[id] = product_id
-	adapter.stations[id] = station
+func (adapter *Adapter) Mount(deviceId string, productId string, station types.Options) (err error) {
+	adapter.devices[deviceId] = productId
+	adapter.stations[deviceId] = station
 
 	//加载映射表
-	adapter.mappers[product_id], err = product.LoadConfig[Mapper](product_id, "mapper")
+	adapter.mappers[productId], err = product.LoadConfig[Mapper](productId, "mapper")
 	if err != nil {
 		return err
 	}
 
 	//加载轮询表
-	adapter.pollers[product_id], err = product.LoadConfig[[]*Poller](product_id, "poller")
+	adapter.pollers[productId], err = product.LoadConfig[[]*Poller](productId, "poller")
 	if err != nil {
 		return err
 	}
@@ -37,18 +37,21 @@ func (adapter *Adapter) Mount(id string, product_id string, station types.Option
 	return nil
 }
 
-func (adapter *Adapter) Unmount(id string) error {
-	delete(adapter.devices, id)
-	delete(adapter.stations, id)
+func (adapter *Adapter) Unmount(deviceId string) error {
+	delete(adapter.devices, deviceId)
+	delete(adapter.stations, deviceId)
 	return nil
 }
 
-func (adapter *Adapter) Get(id, name string) (any, error) {
-	product_id := adapter.devices[id]
-	station := adapter.stations[id]
+func (adapter *Adapter) Get(deviceId, name string) (any, error) {
+	productId, has := adapter.devices[deviceId]
+	if !has {
+		return nil, errors.New("设备未注册")
+	}
+	station := adapter.stations[deviceId]
 	slave := station.Int("slave", 1)
 
-	mapper := adapter.mappers[product_id]
+	mapper := adapter.mappers[productId]
 	if mapper == nil {
 		return nil, errors.New("没有地址映射")
 	}
@@ -66,12 +69,15 @@ func (adapter *Adapter) Get(id, name string) (any, error) {
 	return point.Parse(address, data)
 }
 
-func (adapter *Adapter) Set(id, name string, value any) error {
-	product_id := adapter.devices[id]
-	station := adapter.stations[id]
+func (adapter *Adapter) Set(deviceId, name string, value any) error {
+	productId, has := adapter.devices[deviceId]
+	if !has {
+		return errors.New("设备未注册")
+	}
+	station := adapter.stations[deviceId]
 	slave := station.Int("slave", 1)
 
-	mapper := adapter.mappers[product_id]
+	mapper := adapter.mappers[productId]
 	if mapper == nil {
 		return errors.New("没有地址映射")
 	}
@@ -87,22 +93,25 @@ func (adapter *Adapter) Set(id, name string, value any) error {
 	return adapter.modbus.Write(uint8(slave), code, address, data)
 }
 
-func (adapter *Adapter) Sync(id string) (map[string]any, error) {
-	product_id := adapter.devices[id]
-	station := adapter.stations[id]
+func (adapter *Adapter) Poll(deviceId string) (map[string]any, error) {
+	productId, has := adapter.devices[deviceId]
+	if !has {
+		return nil, errors.New("设备未注册")
+	}
+	station := adapter.stations[deviceId]
 	slave := station.Int("slave", 1)
 
 	//没有地址表和轮询器，则跳过
 	//if d.pollers == nil || d.mappers == nil {
 	//	return nil, nil
 	//}
-	mapper := adapter.mappers[product_id]
+	mapper := adapter.mappers[productId]
 	if mapper == nil {
 		return nil, errors.New("没有地址映射")
 	}
 
 	values := make(map[string]any)
-	for _, poller := range *adapter.pollers[product_id] {
+	for _, poller := range *adapter.pollers[productId] {
 		if poller == nil {
 			continue
 		}
@@ -115,7 +124,6 @@ func (adapter *Adapter) Sync(id string) (map[string]any, error) {
 			return nil, err
 		}
 	}
-
 
 	return values, nil
 }
