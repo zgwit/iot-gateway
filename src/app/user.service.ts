@@ -14,7 +14,7 @@ export class UserService {
 
     constructor(private rs: SmartRequestService) {
         //console.log("user me")
-        rs.get('user/me').subscribe({
+        rs.get('me').subscribe({
             next: res => {
                 //console.log("user me ok")
                 this.setUser(res.data);

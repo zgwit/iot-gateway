@@ -9,6 +9,7 @@ import {NzCheckboxComponent} from "ng-zorro-antd/checkbox";
 import {NzButtonComponent} from "ng-zorro-antd/button";
 import {NzCardComponent} from "ng-zorro-antd/card";
 import {SmartRequestService} from "@god-jason/smart";
+import {UserService} from "../user.service";
 
 @Component({
     selector: 'app-login',
@@ -35,6 +36,7 @@ export class LoginComponent implements OnInit {
 
     constructor(private fb: FormBuilder,
                 private rs: SmartRequestService,
+                private us: UserService,
                 private router: Router,
     ) {
     }
@@ -56,13 +58,9 @@ export class LoginComponent implements OnInit {
             //localStorage.setItem('token', res.data.token);
 
             //更新用户
-            //this.us.setUser(res.data);
+            this.us.setUser(res.data);
 
-            if (res.data.admin) {
-                this.router.navigateByUrl('/admin')
-            } else {
-                this.router.navigateByUrl('/select')
-            }
+            this.router.navigateByUrl('/admin')
         });
     }
 
