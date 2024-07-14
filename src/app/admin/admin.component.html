@@ -4,7 +4,7 @@
 
         <div [nzDropdownMenu]="menuDp" class="user" nz-dropdown nzTrigger="click">
             <img alt="logo" class="avatar" src="/assets/manager.png">
-            manager
+            管理员
         </div>
         <nz-dropdown-menu #menuDp="nzDropdownMenu">
             <ul nz-menu>
@@ -19,7 +19,7 @@
                 <li *ngFor="let item of menuList" [nzIcon]="item['icon']"
                     [nzOpen]="item.open" [nzTitle]="item['title']" nz-submenu>
                     <ul>
-                        <li *ngFor="let it of item.children" [routerLink]="it['path']" nz-menu-item
+                        <li *ngFor="let it of item.children" [routerLink]="it.path" [queryParams]="it.query" nz-menu-item
                             nzMatchRouter>{{ it.title }}
                         </li>
                     </ul>

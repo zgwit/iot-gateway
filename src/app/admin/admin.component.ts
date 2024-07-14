@@ -1,8 +1,9 @@
 import {Component} from '@angular/core';
-import {NzContextMenuService, NzDropDownModule} from 'ng-zorro-antd/dropdown';
+import {NzDropDownModule} from 'ng-zorro-antd/dropdown';
 import {NzLayoutModule} from "ng-zorro-antd/layout";
 import {RouterModule} from "@angular/router";
 import {CommonModule} from "@angular/common";
+import {SmartRequestService} from "@god-jason/smart";
 
 @Component({
     selector: 'app-admin',
@@ -18,27 +19,31 @@ import {CommonModule} from "@angular/common";
 })
 export class AdminComponent {
     edit!: number;
-    activeMenu: string = '';
-    ary = [false, false
-        , false
-        , false
-        , false]
-    menuList = [{
-        title: '产品管理',
-        icon: 'project',
+
+    menuSetting: any = {
+        title: '系统设置',
+        icon: 'apartment',
         open: false,
-        children: [
-            {
-                title: '所有产品',
-                path: '/admin/product'
-            },
-            {
-                title: '所有设备',
-                path: '/admin/device'
-            }
-        ]
+        children: []
     }
-        , {
+
+    menuList: any = [
+        {
+            title: '产品管理',
+            icon: 'project',
+            open: false,
+            children: [
+                {
+                    title: '所有产品',
+                    path: '/admin/product'
+                },
+                {
+                    title: '所有设备',
+                    path: '/admin/device'
+                }
+            ]
+        },
+        {
             title: '连接管理',
             icon: 'appstore',
             open: false,
@@ -60,56 +65,23 @@ export class AdminComponent {
                     path: '/admin/serial'
                 },
             ]
-        }
-        // ,
-        // {
-        //   title: '系统设置',
-        //   icon: 'apartment',
-        //   open: false,
-        //   children: [
-        //     {
-        //       title: '网站',
-        //       path: '/admin/setting/web'
-        //     },
-        //     {
-        //       title: '数据库',
-        //       path: '/admin/setting/database'
-        //     },
-        //     {
-        //       title: '日志',
-        //       path: '/admin/setting/log'
-        //     },
-        //     {
-        //       title: '消息总线',
-        //       path: '/admin/setting/mqtt'
-        //     },
-        //   ]
-        // }
+        },
+        this.menuSetting
     ]
 
-    constructor(
-        private nzContextMenuService: NzContextMenuService,
-    ) {
-        for (let index = 0; index < this.menuList.length; index++) {
-            const item = this.menuList[index];
-            const {children} = item;
-            for (let i = 0; i < children.length; i++) {
-                const it = children[i];
-                if (it.path === location.pathname) {
-                    item.open = true;
-                }
-            }
-        }
+    constructor(private rs: SmartRequestService,) {
+        this.load()
     }
-    // contextMenu($event: MouseEvent, menu: NzDropdownMenuComponent, mes: number): void {
-    //   this.edit = mes
-    //   this.nzContextMenuService.create($event, menu);
-    // }
-    // clientFm(num: number) {
-    //   this.ary[num] = false
 
-    // }
-    selectDropdown(): void {
-        this.ary[this.edit] = true
+    load() {
+        this.rs.get('setting/modules').subscribe(res => {
+            res.data?.forEach((s: any) => {
+                this.menuSetting.children.push({
+                    name: s.name,
+                    path: "/admin/setting",
+                    query: {module: s.module}
+                })
+            })
+        })
     }
 }
