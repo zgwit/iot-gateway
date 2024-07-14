@@ -1,0 +1,9 @@
+<smart-table
+        (query)="search($event)"
+        [buttons]="ref ? [] : buttons"
+        [columns]="ref ? columnsSelect : columns"
+        [datum]="datum"
+        [loading]="loading"
+        [operators]="ref ? operatorsSelect : operators"
+        [total]="total"
+></smart-table>

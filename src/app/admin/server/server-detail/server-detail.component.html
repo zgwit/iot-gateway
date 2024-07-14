@@ -1,11 +1,19 @@
-<p>服务器详情：{{ data | json }}</p>
-<nz-tabset nzType="line">
-  <nz-tab nzTitle="连接">
-    <ng-template nz-tab>
-      <app-server-link [server]="id"></app-server-link>
-    </ng-template>
-  </nz-tab>
-  <nz-tab nzTitle="日志">
-    <ng-template nz-tab> </ng-template>
-  </nz-tab>
-</nz-tabset>
+<nz-card [nzExtra]="extra" nzTitle="服务器详情">
+    <smart-info [fields]="fields" [value]="data"></smart-info>
+
+    <nz-tabset nzType="line">
+        <nz-tab nzTitle="连接">
+            <app-links [server_id]="id"></app-links>
+        </nz-tab>
+        <nz-tab nzTitle="日志">
+            <ng-template nz-tab></ng-template>
+        </nz-tab>
+    </nz-tabset>
+
+</nz-card>
+<ng-template #extra>
+    <nz-space>
+        <button *nzSpaceItem nz-button routerLink="edit">编辑</button>
+        <button (nzOnConfirm)="delete()" *nzSpaceItem nz-button nz-popconfirm nzPopconfirmTitle="确认删除">删除</button>
+    </nz-space>
+</ng-template>

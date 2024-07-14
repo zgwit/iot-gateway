@@ -1,0 +1,23 @@
+<nz-card [nzExtra]="extra" nzTitle="设备详情">
+    <smart-info [fields]="fields" [value]="data"></smart-info>
+
+    <nz-tabset>
+        <nz-tab nzTitle="实时状态">
+            <ng-template nz-tab>
+                <app-device-property [id]="id"></app-device-property>
+            </ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="报警日志">
+            <ng-template nz-tab>
+
+            </ng-template>
+        </nz-tab>
+    </nz-tabset>
+
+</nz-card>
+<ng-template #extra>
+    <nz-space>
+        <button *nzSpaceItem nz-button routerLink="edit">编辑</button>
+        <button (nzOnConfirm)="delete()" *nzSpaceItem nz-button nz-popconfirm nzPopconfirmTitle="确认删除">删除</button>
+    </nz-space>
+</ng-template>

@@ -1,0 +1,36 @@
+<nz-card [nzExtra]="extra" nzTitle="产品详情">
+    <smart-info [fields]="fields" [value]="data"></smart-info>
+
+    <nz-collapse></nz-collapse>
+
+    <nz-tabset>
+        <nz-tab nzTitle="产品设备">
+            <ng-template nz-tab>
+                <app-devices [product_id]="id"></app-devices>
+            </ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="产品动作">
+            <ng-template nz-tab>
+                <app-product-action-edit [product_id]="id"></app-product-action-edit>
+            </ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="数据映射">
+            <ng-template nz-tab>
+                <app-product-mapper-edit [product_id]="id"></app-product-mapper-edit>
+            </ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="数据轮询">
+            <ng-template nz-tab>
+                <app-product-poller-edit [product_id]="id"></app-product-poller-edit>
+            </ng-template>
+        </nz-tab>
+    </nz-tabset>
+
+
+</nz-card>
+<ng-template #extra>
+    <nz-space>
+        <button *nzSpaceItem nz-button routerLink="edit">编辑</button>
+        <button (nzOnConfirm)="delete()" *nzSpaceItem nz-button nz-popconfirm nzPopconfirmTitle="确认删除">删除</button>
+    </nz-space>
+</ng-template>

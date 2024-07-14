@@ -1,0 +1,50 @@
+<nz-row [nzGutter]="[10, 10]" class="variables">
+    <nz-col *ngFor="let p of properties" [nzLg]="4" [nzMd]="6" [nzSm]="8" [nzXXl]="2" [nzXl]="3" [nzXs]="12">
+        <div [ngClass]="{active:actives[p.name]}" class="variable">
+            <nz-statistic (click)="actives[p.name]=!actives[p.name]; search()" [nzSuffix]="p.unit" [nzTitle]="p.label"
+                          [nzValue]="values[p.name] || '-'">
+            </nz-statistic>
+            <nz-switch (ngModelChange)="valueSwitch(p.name, $event)" *ngIf="p.type=='bool' && p.mode=='rw'" [ngModel]="values[p.name]"
+                       nzSize="small"></nz-switch>
+        </div>
+    </nz-col>
+</nz-row>
+
+<div class="history">
+
+    <form [formGroup]="group" nz-form>
+        <div nz-row>
+            <div [nzSpan]="8" nz-col>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24">窗口时间</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="">
+                        <ng-template #addOnAfterTemplate>
+                            <nz-select (change)="search()" (nzOpenChange)="search()" formControlName="winTp"
+                                       style="width: 60px">
+                                <nz-option nzLabel="秒" nzValue="s"></nz-option>
+                                <nz-option nzLabel="分" nzValue="m"></nz-option>
+                                <nz-option nzLabel="时" nzValue="h"></nz-option>
+                            </nz-select>
+                        </ng-template>
+                        <nz-input-number-group [nzAddOnAfter]="addOnAfterTemplate" style="width: 100%">
+                            <nz-input-number (change)="search()" [nzStep]="1"
+                                             formControlName="window"></nz-input-number>
+                        </nz-input-number-group>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div [nzSpan]="16" nz-col>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="3" [nzXs]="24">起止时间</nz-form-label>
+                    <nz-form-control [nzSm]="18" [nzXs]="24" nzErrorTip="" style="width: 100%">
+                        <nz-range-picker (change)="search()" [nzShowTime]="true" formControlName="strEnd"
+                                         nzMode="date"></nz-range-picker>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+
+    <echarts (chartInit)="chartInit($event)" [options]="option" class="chart"></echarts>
+</div>

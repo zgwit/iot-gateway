@@ -223,6 +223,8 @@ func (l *Tunnel) Start() (err error) {
 
 	//加载设备
 	for _, d := range l.devices {
+		d.SetAdapter(l.Adapter)
+
 		err = l.Adapter.Mount(d.Id, d.ProductId, d.Station)
 		if err != nil {
 			log.Error(err)

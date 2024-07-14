@@ -1,31 +1,33 @@
 <nz-layout>
-  <nz-header>
-    <div class="title"><img src="assets/module.png" />物联大师智能网关</div>
+    <nz-header>
+        <div class="title"><img src="assets/module.png"/>物联大师智能网关</div>
 
-    <div class="user" nzTrigger="click" nz-dropdown [nzDropdownMenu]="menuDp">
-      <img class="avatar" src="/assets/manager.png" alt="logo">
-      manager
-    </div>
-    <nz-dropdown-menu #menuDp="nzDropdownMenu">
-      <ul nz-menu>
-        <li nz-menu-item>修改密码</li>
-        <li nz-menu-item>退出</li>
-      </ul>
-    </nz-dropdown-menu>
-  </nz-header>
-  <nz-layout class="main">
-    <nz-sider>
-      <ul nz-menu nzMode="inline" [nzTheme]="'dark'">
-        <li *ngFor="let item of menuList" nz-submenu
-            [nzTitle]="item['title']" [nzIcon]="item['icon']" [nzOpen]="item.open">
-          <ul>
-            <li nz-menu-item *ngFor="let it of item.children" [routerLink]="it['path']" nzMatchRouter>{{it.title}}</li>
-          </ul>
-        </li>
-      </ul>
-    </nz-sider>
-    <nz-content>
-      <router-outlet></router-outlet>
-    </nz-content>
-  </nz-layout>
+        <div [nzDropdownMenu]="menuDp" class="user" nz-dropdown nzTrigger="click">
+            <img alt="logo" class="avatar" src="/assets/manager.png">
+            manager
+        </div>
+        <nz-dropdown-menu #menuDp="nzDropdownMenu">
+            <ul nz-menu>
+                <li nz-menu-item>修改密码</li>
+                <li nz-menu-item>退出</li>
+            </ul>
+        </nz-dropdown-menu>
+    </nz-header>
+    <nz-layout class="main">
+        <nz-sider>
+            <ul [nzTheme]="'dark'" nz-menu nzMode="inline">
+                <li *ngFor="let item of menuList" [nzIcon]="item['icon']"
+                    [nzOpen]="item.open" [nzTitle]="item['title']" nz-submenu>
+                    <ul>
+                        <li *ngFor="let it of item.children" [routerLink]="it['path']" nz-menu-item
+                            nzMatchRouter>{{ it.title }}
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nz-sider>
+        <nz-content>
+            <router-outlet></router-outlet>
+        </nz-content>
+    </nz-layout>
 </nz-layout>

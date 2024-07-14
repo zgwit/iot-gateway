@@ -1,0 +1,55 @@
+:host {
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+
+
+  width: 100%;
+  height: 100%;
+
+  background-color: #888888;
+
+  //background-image: url("../../assets/bk.jpg");
+  background-image: url(/assets/bg.jpg);
+  background-size: cover;
+  background-position: center;
+
+  //background-color: #25282a;
+  //background-image:
+  //  radial-gradient(#53515010 2px, #25282a 0),
+  //  radial-gradient(#535150a0 0.95px, transparent 0.95px),
+  //  radial-gradient(#535150a0 0.95px, #25282a 0.95px);
+  //
+  //background-size: 38px 38px;
+  //background-position: 0 0, 19px 19px;
+}
+
+.login {
+  //margin-top: 100px;
+  width: 300px;
+  //max-width: 400px;
+
+}
+
+
+.login-form {
+  //background-color: white;
+  background-color: white;
+  border-radius: 15px;
+  padding: 30px 50px;
+  //box-shadow: black 2px 2px 5px;
+}
+
+.login-form-margin {
+  margin-bottom: 16px;
+}
+
+.login-form-forgot {
+  float: right;
+}
+
+.login-form-button {
+  width: 100%;
+}

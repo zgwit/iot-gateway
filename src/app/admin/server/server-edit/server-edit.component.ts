@@ -1,121 +1,103 @@
-import {RequestService} from '../../../request.service';
-import {Component, Input, Output, ViewChild, EventEmitter, OnInit} from '@angular/core';
-import {
-    UntypedFormBuilder,
-    FormGroup,
-    UntypedFormGroup,
-    ValidationErrors,
-    Validators,
-    FormsModule,
-} from '@angular/forms';
+import {AfterViewInit, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {NzButtonComponent} from 'ng-zorro-antd/button';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {NzMessageService} from 'ng-zorro-antd/message';
-import {ActivatedRoute, Router} from '@angular/router';
-import {EditTableItem} from "../../base/edit-table/edit-table.component";
+import {CommonModule} from '@angular/common';
+import {NzCardComponent} from "ng-zorro-antd/card";
+import {SmartEditorComponent, SmartField, SmartRequestService} from "@god-jason/smart";
+import {InputProtocolComponent} from "../../../components/input-protocol/input-protocol.component";
+import {ReactiveFormsModule} from "@angular/forms";
 
 @Component({
-    selector: 'app-server-edit',
+    selector: 'app-servers-edit',
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NzButtonComponent,
+        RouterLink,
+        NzCardComponent,
+        SmartEditorComponent,
+        InputProtocolComponent,
+    ],
     templateUrl: './server-edit.component.html',
     styleUrls: ['./server-edit.component.scss'],
 })
-export class ServerEditComponent implements OnInit {
+export class ServerEditComponent implements OnInit, AfterViewInit {
+    id: any = '';
 
-    validateForm!: UntypedFormGroup;
-    id: any = 0;
+    @ViewChild('form') form!: SmartEditorComponent
+    @ViewChild('chooseProtocol') chooseProtocol!: TemplateRef<any>
 
-    deviceList = [];
 
-    mode = 'new';
+    fields: SmartField[] = []
+    data: any = {}
 
-    listData: EditTableItem[] = [{
-        label: '从站号',
-        name: 'slave',
-        type: 'number',
-        default: 1,
-    }, {
-        label: '名称',
-        name: 'name'
-    }, {
-        label: '产品号',
-        name: 'product_id'
-    }]
-
-    constructor(
-        private fb: UntypedFormBuilder,
-        private msg: NzMessageService,
-        private rs: RequestService,
-        private route: ActivatedRoute,
-        private router: Router
+    constructor(private router: Router,
+                private msg: NzMessageService,
+                private rs: SmartRequestService,
+                private route: ActivatedRoute
     ) {
+    }
+
+    build() {
+        this.fields = [
+            {key: "id", label: "ID", type: "text", min: 2, max: 30, placeholder: "选填"},
+            {key: "name", label: "名称", type: "text", required: true, default: '新服务端'},
+            {key: "port", label: "端口", type: "number", min: 1, max: 65535, default: 60000},
+            {
+                key: "mode", label: "模式", type: "select", default: "register", options: [
+                    {label: "注册包", value: "register"},
+                    {label: "多连接", value: "multiple"},
+                    {label: "单连接", value: "single"},
+                ]
+            },
+            {
+                key: "protocol_name", label: "通讯协议", type: "template", template: this.chooseProtocol,
+                change: ($event) => setTimeout(() => this.loadProtocolOptions($event))
+            },
+            {key: "protocol_options", label: "通讯协议参数", type: "object"},
+            {key: "description", label: "说明", type: "textarea"},
+        ]
     }
 
     ngOnInit(): void {
         if (this.route.snapshot.paramMap.has('id')) {
-            this.mode = "edit";
             this.id = this.route.snapshot.paramMap.get('id');
-            this.rs.get(`server/${this.id}`).subscribe((res) => {
-                this.setData(res);
-            });
+            this.load()
         }
-        this.build();
     }
 
-    build(mess?: any) {
-        mess = mess || {};
-        this.validateForm = this.fb.group({
-            id: [mess.id || '', this.mode === "edit" ? [Validators.required] : ''],
-            name: [mess.name || ''],
-            desc: [mess.desc || ''],
-            port: [mess.port || 60000],
-            poller_period: [mess.poller_period || 60],
-            poller_interval: [mess.poller_interval || 2],
-            protocol_name: [mess.protocol || 'rtu'],
-            protocol_options: [mess.protocol || ''],
-            defaults: [mess.defaults || []],
+    ngAfterViewInit(): void {
+        setTimeout(() => this.build(), 1)
+    }
+
+    load() {
+        this.rs.get(`server/` + this.id).subscribe((res) => {
+            this.data = res.data
+            this.loadProtocolOptions(this.data.protocol_name)
         });
     }
 
-    setData(res: any) {
-        const resData = (res && res.data) || {};
-        const odata = this.validateForm.value;
-        for (const key in odata) {
-            if (resData[key]) {
-                odata[key] = resData[key];
-            }
-        }
-        this.validateForm.setValue(odata);
+
+    loadProtocolOptions(protocol: string) {
+        if (protocol)
+            this.rs.get(`protocol/${protocol}/option`).subscribe((res) => {
+                this.fields[4].children = res.data
+                this.form.group.setControl("protocol_options", this.form.build(res.data, this.form.value.protocol_options))
+            });
     }
 
-    handleCancel() {
-        this.router.navigateByUrl(`/admin/server`);
-    }
-
-    submit() {
-        if (this.validateForm.valid) {
-            this.validateForm.patchValue({
-                port: Number(this.validateForm.value.port),
-            });
-            let url = this.id ? `server/${this.id}` : `server/create`;
-            this.rs.post(url, this.validateForm.value).subscribe((res) => {
-                this.msg.success('保存成功');
-                this.router.navigateByUrl(`/admin/server`);
-            });
-        } else {
-            Object.values(this.validateForm.controls).forEach(control => {
-                if (control.invalid) {
-                    control.markAsDirty();
-                    control.updateValueAndValidity({onlySelf: true});
-                }
-            });
+    onSubmit() {
+        if (!this.form.valid) {
+            this.msg.error('请检查数据')
+            return
         }
-    }
 
-    reset() {
-        this.validateForm.reset();
-        for (const key in this.validateForm.controls) {
-            if (this.validateForm.controls.hasOwnProperty(key)) {
-                this.validateForm.controls[key].markAsPristine();
-                this.validateForm.controls[key].updateValueAndValidity();
-            }
-        }
+        let url = `server/${this.id || 'create'}`
+        this.rs.post(url, this.form.value).subscribe((res) => {
+            this.router.navigateByUrl('/admin/server/' + res.data.id);
+            this.msg.success('保存成功');
+        });
     }
 }

@@ -1,0 +1,7 @@
+<nz-card [nzExtra]="extraTemplate" nzTitle="动作编辑">
+    <smart-editor #editor [fields]="fields" [values]="data"></smart-editor>
+</nz-card>
+
+<ng-template #extraTemplate>
+    <button (click)="onSubmit()" nz-button nzType="primary">保存</button>
+</ng-template>

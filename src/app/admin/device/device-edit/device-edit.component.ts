@@ -1,95 +1,128 @@
-import { RequestService } from '../../../request.service';
-import { Component, OnInit, ViewChild } from '@angular/core';
-import {
-  UntypedFormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { ActivatedRoute, Router } from '@angular/router';
+import {AfterViewInit, Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {NzButtonComponent} from 'ng-zorro-antd/button';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {SmartEditorComponent, SmartField, SmartRequestService} from '@god-jason/smart';
+import {NzMessageService} from 'ng-zorro-antd/message';
+import {CommonModule} from '@angular/common';
+import {NzCardComponent} from "ng-zorro-antd/card";
+import {InputProductComponent} from "../../../components/input-product/input-product.component";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {InputTunnelComponent} from "../../../components/input-tunnel/input-tunnel.component";
+
 @Component({
-  selector: 'app-device-edit',
-  templateUrl: './device-edit.component.html',
-  styleUrls: ['./device-edit.component.scss'],
+    selector: 'app-device-edit',
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NzButtonComponent,
+        RouterLink,
+        NzCardComponent,
+        SmartEditorComponent,
+        InputProductComponent,
+        InputTunnelComponent,
+    ],
+    templateUrl: './device-edit.component.html',
+    styleUrl: './device-edit.component.scss',
 })
-export class DeviceEditComponent implements OnInit {
-  validateForm!: FormGroup;
-  id: any = 0;
-  mode = "new";
-  tunnel_id: string = '';
-  @ViewChild('setProductIdTag') setProductIdTag: any;
-  constructor(
-    private fb: UntypedFormBuilder,
-    private msg: NzMessageService,
-    private rs: RequestService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
-  ngOnInit(): void {
-    if (this.route.snapshot.paramMap.has('id')) {
-      this.mode = "edit";
-      this.id = this.route.snapshot.paramMap.get('id');
-      this.rs.get(`device/${this.id}`).subscribe((res) => {
-        this.setData(res);
-      });
-    } else {
-      this.route.queryParams.subscribe((params) => {
-        this.tunnel_id = params['tunnelId'];
-      })
+export class DeviceEditComponent implements OnInit, AfterViewInit {
+    tunnel_id: any = '';
+    id: any = '';
+
+    data: any = {}
+
+    @ViewChild('form') form!: SmartEditorComponent
+    @ViewChild("chooseProduct") chooseProduct!: TemplateRef<any>
+    @ViewChild("chooseTunnel") chooseTunnel!: TemplateRef<any>
+
+    fields: SmartField[] = [
+        {key: "id", label: "ID", type: "text", min: 2, max: 30, placeholder: "选填"},
+        {key: "name", label: "名称", type: "text", required: true, default: '新设备'},
+    ]
+
+    constructor(private router: Router,
+                private msg: NzMessageService,
+                private rs: SmartRequestService,
+                private route: ActivatedRoute
+    ) {
     }
-    this.build();
-  }
-  build(mess?: any) {
-    mess = mess || {};
-    this.validateForm = this.fb.group({
-      id: [mess.id || '', this.mode === "edit" ? [Validators.required] : ''],
-      name: [mess.name || ''],
-      desc: [mess.desc || ''],
-      tunnel_id: [mess.tunnel_id || this.tunnel_id],
-      product_id: [mess.product_id || ''],
-      slave: [mess.slave || 1]
-    });
-  }
-  setData(res: any) {
-    const resData = (res && res.data) || {};
-    const odata = this.validateForm.value;
-    for (const key in odata) {
-      if (resData[key]) {
-        odata[key] = resData[key];
-      }
+
+    build() {
+        this.fields = [
+            {key: "id", label: "ID", type: "text", min: 2, max: 30, placeholder: "选填"},
+            {key: "name", label: "名称", type: "text", required: true, default: '新设备'},
+            {key: "keywords", label: "关键字", type: "tags", default: []},
+            {
+                key: "product_id", label: "产品", type: "template", template: this.chooseProduct,
+                change: () => setTimeout(() => this.loadProtocolStation())
+            },
+            {key: "tunnel_id", label: "通道", type: "template", template: this.chooseTunnel},
+            {key: "station", label: "从站", type: "object"},
+            {key: "description", label: "说明", type: "textarea"},
+        ]
     }
-    this.validateForm.setValue(odata);
-    // 给子组件设值
-    this.setProductIdTag.product_id = resData['product_id'] || '';
-  }
-  handleCancel() {
-    this.router.navigateByUrl(`/admin/device`);
-  }
-  submit() {
-    if (this.validateForm.valid) {
-      let url = this.id ? `device/${this.id}` : `device/create`;
-      this.validateForm.patchValue({ product_id: this.setProductIdTag.product_id })
-      this.rs.post(url, this.validateForm.value).subscribe((res) => {
-        this.msg.success('保存成功');
-        this.router.navigateByUrl(`/admin/device`);
-      });
-      return;
-    } else {
-      Object.values(this.validateForm.controls).forEach((control) => {
-        if (control.invalid) {
-          control.markAsDirty();
-          control.updateValueAndValidity({ onlySelf: true });
+
+    ngOnInit(): void {
+        if (this.route.snapshot.paramMap.has('id')) {
+            this.id = this.route.snapshot.paramMap.get('id');
+            this.load()
         }
-      });
+        if (this.route.snapshot.paramMap.has('tunnel_id')) {
+            this.tunnel_id = this.route.snapshot.paramMap.get('tunnel_id');
+        }
     }
-  }
-  reset() {
-    this.validateForm.reset();
-    for (const key in this.validateForm.controls) {
-      if (this.validateForm.controls.hasOwnProperty(key)) {
-        this.validateForm.controls[key].markAsPristine();
-        this.validateForm.controls[key].updateValueAndValidity();
-      }
+
+    ngAfterViewInit(): void {
+        //this.build()
+        setTimeout(() => {
+            this.build()
+            if (this.tunnel_id) {
+                this.data.tunnel_id = this.tunnel_id
+                this.form.patchValue({tunnel_id: this.tunnel_id})
+                this.form.group.get('tunnel_id')?.disable()
+            }
+
+        }, 100)
     }
-  }
+
+
+    load() {
+        this.rs.get(`device/${this.id}`).subscribe(res => {
+            this.data = res.data
+            //this.loadProtocolStation()
+            setTimeout(() => this.loadProtocolStation(), 100)
+        });
+    }
+
+    loadProtocolStation() {
+        console.log("loadProtocolStation", this.form.value)
+        this.data = this.form.value
+
+        let product_id = this.form.value.product_id
+        if (product_id) {
+            this.rs.get(`product/${product_id}`).subscribe(res => {
+                let product = res.data
+                this.rs.get(`protocol/${product.protocol}/station`).subscribe(res => {
+                    if (res.data) {
+                        this.fields[6].children = res.data
+                        this.form.ngOnInit()
+                    }
+                })
+            });
+        }
+    }
+
+    onSubmit() {
+        if (!this.form.valid) {
+            this.msg.error('请检查数据')
+            return
+        }
+
+        let url = `device/${this.id || 'create'}`
+        this.rs.post(url, this.form.value).subscribe((res) => {
+            this.router.navigateByUrl(`admin/device/` + res.data.id);
+            this.msg.success('保存成功');
+        });
+    }
 }

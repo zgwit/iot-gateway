@@ -19,6 +19,7 @@ function readCsv(e: any, that: any, url: string) {
     };
     reader.readAsText(file, 'gb2312');
 }
+
 function handleData(data: (string | any[])[], that: any, url: string) {
     data.splice(0, 1);//删除表头
     let len = data.length;
@@ -48,6 +49,7 @@ function handleData(data: (string | any[])[], that: any, url: string) {
         })
     });
 }
+
 export {
     readCsv
 }

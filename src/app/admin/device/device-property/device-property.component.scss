@@ -1,0 +1,37 @@
+:host {
+  //padding: 10px 20px;
+  width: 100%;
+}
+
+.variables {
+  padding: 10px;
+
+  .variable {
+    background-color: white;
+    padding: 10px;
+    cursor: pointer;
+
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+
+    transition: box-swadow 0.3s, border-color 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 5px grey;
+    }
+
+    &.active {
+      box-shadow: 0 0 5px grey;
+    }
+  }
+}
+
+.history {
+  width: 100%;
+}
+
+.chart {
+  height: 300px;
+  width: 800px;
+  min-width: 400px;
+}
