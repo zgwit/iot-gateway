@@ -116,9 +116,6 @@ func (adapter *Adapter) Sync(id string) (map[string]any, error) {
 		}
 	}
 
-	//TODO 过滤器
-
-	//TODO 计算器
 
 	return values, nil
 }

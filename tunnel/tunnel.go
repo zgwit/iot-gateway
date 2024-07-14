@@ -267,6 +267,10 @@ func (l *Tunnel) Poll() {
 				_ = pool.Insert(func() {
 					dev.Push(values)
 				})
+
+				//TODO 过滤器
+
+				//TODO 计算器
 			}
 		}
 
