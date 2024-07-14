@@ -48,22 +48,13 @@ func (s *Server) handleSingle(c *net.TCPConn) (err error) {
 	}
 	l.Running = true
 	l.Status = "正常"
-	l.Conn = &connect.NetConn{c}
+	l.Conn = &connect.NetConn{Conn: c}
 
 	s.children[k] = l
 	//以ServerID保存
 	links.Store(s.Id, l)
 
-	//启动轮询
-	l.Adapter, err = protocol.Create(l, l.ProtocolName, l.ProtocolOptions)
-	if err != nil {
-		return err
-	}
-
-	//启动轮询
-	go l.Poll()
-
-	return nil
+	return l.Start(l)
 }
 
 func (s *Server) handleIncoming(c *net.TCPConn) error {
@@ -134,9 +125,7 @@ func (s *Server) handleRegister(c *net.TCPConn) error {
 	s.children[sn] = &l
 	links.Store(l.Id, &l)
 
-	//启动轮询
-	l.Adapter, err = protocol.Create(&l, l.ProtocolName, l.ProtocolOptions)
-	return err
+	return l.Start(&l)
 }
 
 // Open 打开

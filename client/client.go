@@ -6,7 +6,6 @@ import (
 	"github.com/god-jason/bucket/log"
 	"github.com/zgwit/iot-gateway/connect"
 	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/protocol"
 	"github.com/zgwit/iot-gateway/tunnel"
 	"net"
 )
@@ -48,14 +47,5 @@ func (c *Client) Open() error {
 
 	c.Conn = &connect.NetConn{Conn: conn}
 
-	//加载协议
-	c.Adapter, err = protocol.Create(c, c.ProtocolName, c.ProtocolOptions)
-	if err != nil {
-		return err
-	}
-
-	//启动轮询
-	go c.Poll()
-
-	return nil
+	return c.Start(c)
 }

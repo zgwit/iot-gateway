@@ -52,7 +52,7 @@ type Tunnel struct {
 	Adapter protocol.Adapter `json:"-" xorm:"-"`
 
 	//设备
-	devices []*device.Device
+	devices []*device.Device `json:"-" xorm:"-"`
 
 	//透传
 	pipe io.ReadWriteCloser
@@ -211,6 +211,32 @@ func (l *Tunnel) Pipe(pipe io.ReadWriteCloser) {
 	//TODO 使用io.copy
 	//go io.Copy(pipe, l.conn)
 	//go io.Copy(l.conn, pipe)
+}
+
+func (l *Tunnel) Start(conn connect.Tunnel) (err error) {
+	//加载协议
+	l.Adapter, err = protocol.Create(conn, l.ProtocolName, l.ProtocolOptions)
+	if err != nil {
+		return err
+	}
+
+	l.devices, err = device.LoadByTunnel(l.Id)
+	if err != nil {
+		return err
+	}
+
+	//加载设备
+	for _, d := range l.devices {
+		err = l.Adapter.Mount(d.Id, d.ProductId, d.Station)
+		if err != nil {
+			log.Error(err)
+			//return err
+		}
+	}
+
+	go l.Poll()
+
+	return nil
 }
 
 func (l *Tunnel) Poll() {

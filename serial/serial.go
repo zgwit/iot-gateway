@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/god-jason/bucket/log"
 	"github.com/zgwit/iot-gateway/db"
-	"github.com/zgwit/iot-gateway/protocol"
 	"github.com/zgwit/iot-gateway/tunnel"
 	"go.bug.st/serial"
 	"time"
@@ -58,14 +57,5 @@ func (s *Serial) Open() error {
 
 	s.Conn = port
 
-	//启动轮询
-	s.Adapter, err = protocol.Create(s, s.ProtocolName, s.ProtocolOptions)
-	if err != nil {
-		return err
-	}
-
-	//启动轮询
-	go s.Poll()
-
-	return nil
+	return s.Start(s)
 }

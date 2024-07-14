@@ -54,9 +54,12 @@ func (adapter *Adapter) Get(id, name string) (any, error) {
 	station := adapter.stations[id]
 	slave := station.Int("slave", 1)
 
-	//todo error
-	mapper, code, address := adapter.mappers[product_id].Lookup(name)
+	mapper := adapter.mappers[product_id]
 	if mapper == nil {
+		return nil, errors.New("没有地址映射")
+	}
+	point, code, address := mapper.Lookup(name)
+	if point == nil {
 		return nil, errors.New("找不到数据点")
 	}
 
@@ -66,7 +69,7 @@ func (adapter *Adapter) Get(id, name string) (any, error) {
 		return nil, err
 	}
 
-	return mapper.Parse(address, data)
+	return point.Parse(address, data)
 }
 
 func (adapter *Adapter) Set(id, name string, value any) error {
@@ -74,12 +77,16 @@ func (adapter *Adapter) Set(id, name string, value any) error {
 	station := adapter.stations[id]
 	slave := station.Int("slave", 1)
 
-	mapper, code, address := adapter.mappers[product_id].Lookup(name)
+	mapper := adapter.mappers[product_id]
 	if mapper == nil {
+		return errors.New("没有地址映射")
+	}
+	point, code, address := mapper.Lookup(name)
+	if point == nil {
 		return errors.New("地址找不到")
 	}
 
-	data, err := mapper.Encode(value)
+	data, err := point.Encode(value)
 	if err != nil {
 		return err
 	}
@@ -95,18 +102,27 @@ func (adapter *Adapter) Sync(id string) (map[string]any, error) {
 	//if d.pollers == nil || d.mappers == nil {
 	//	return nil, nil
 	//}
+	mapper := adapter.mappers[product_id]
+	if mapper == nil {
+		return nil, errors.New("没有地址映射")
+	}
 
 	values := make(map[string]any)
 	for _, poller := range *adapter.pollers[product_id] {
+		if poller == nil {
+			continue
+		}
 		data, err := adapter.modbus.Read(uint8(slave), poller.Code, poller.Address, poller.Length)
 		if err != nil {
 			return nil, err
 		}
-		err = poller.Parse(adapter.mappers[product_id], data, values)
+		err = poller.Parse(mapper, data, values)
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	//TODO 过滤器
 
 	//TODO 计算器
 
