@@ -8,9 +8,5 @@ type Tunnel interface {
 
 	Open() error
 
-	Close() error
-
-	Available() bool
-
 	//Online() bool
 }

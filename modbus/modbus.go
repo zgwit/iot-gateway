@@ -70,9 +70,8 @@ var stationForm = []types.SmartField{
 var modbusRtu = &protocol.Protocol{
 	Name:  "modbus-rtu",
 	Label: "Modbus RTU",
-	Factory: func(conn connect.Tunnel, opts map[string]any) protocol.Adapter {
+	Factory: func(conn connect.Conn, opts map[string]any) protocol.Adapter {
 		return &Adapter{
-			tunnel:   conn,
 			modbus:   NewRTU(conn, opts),
 			devices:  make(map[string]string),
 			stations: make(map[string]types.Options),
@@ -89,9 +88,8 @@ var modbusRtu = &protocol.Protocol{
 var modbusTCP = &protocol.Protocol{
 	Name:  "modbus-tcp",
 	Label: "Modbus TCP",
-	Factory: func(conn connect.Tunnel, opts map[string]any) protocol.Adapter {
+	Factory: func(conn connect.Conn, opts map[string]any) protocol.Adapter {
 		return &Adapter{
-			tunnel:   conn,
 			modbus:   NewTCP(conn, opts),
 			devices:  make(map[string]string),
 			stations: make(map[string]types.Options),

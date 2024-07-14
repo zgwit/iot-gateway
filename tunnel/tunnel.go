@@ -65,10 +65,6 @@ func (l *Tunnel) ID() string {
 	return l.Id
 }
 
-func (l *Tunnel) Available() bool {
-	return l.Running
-}
-
 func (l *Tunnel) Keep(open func() error) {
 	if l.keeping {
 		return

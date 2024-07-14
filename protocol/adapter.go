@@ -2,11 +2,10 @@ package protocol
 
 import (
 	"github.com/god-jason/bucket/types"
-	"github.com/zgwit/iot-gateway/connect"
 )
 
 type Adapter interface {
-	Tunnel() connect.Tunnel
+	//Tunnel() connect.Tunnel
 
 	//设备动态添加
 	Mount(device string, product string, station types.Options) error

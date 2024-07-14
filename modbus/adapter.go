@@ -3,12 +3,10 @@ package modbus
 import (
 	"errors"
 	"github.com/god-jason/bucket/types"
-	"github.com/zgwit/iot-gateway/connect"
 	"github.com/zgwit/iot-gateway/product"
 )
 
 type Adapter struct {
-	tunnel connect.Tunnel
 	modbus Modbus
 
 	//device=>product_id
@@ -18,10 +16,6 @@ type Adapter struct {
 	//product_id => xxx
 	mappers map[string]*Mapper
 	pollers map[string]*[]*Poller
-}
-
-func (adapter *Adapter) Tunnel() connect.Tunnel {
-	return adapter.tunnel
 }
 
 func (adapter *Adapter) Mount(id string, product_id string, station types.Options) (err error) {
