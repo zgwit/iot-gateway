@@ -8,11 +8,12 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zgwit/iot-gateway)](https://goreportcard.com/report/github.com/zgwit/iot-gateway)
 
 
-## 网关协议
+## 网关通讯协议
 
-网关与云平台之前的通讯协议，支持标准mqtt和平台自定义的gpack
+网关与云平台之间使用专用的通讯协议
 
 ### 数据包
+
 | 标识 | 长度（位） | 说明 |
 |----|----|----|
 | 魔术字 | 16 | 0x1234 |
@@ -21,17 +22,18 @@
 
 
 ### 包类型
+
 | 类型 | id | 说明 |
 |----|----|----|
 | CONNECT | 1 | 连接 |
 | CONNECT_ACK | 2 | 连接响应 |
 | HEARTBEAT | 3 | 心跳 |
-| PING | 4 | |
-| PONG | 5 | |
-| STREAM | 6 | 数据流 |
-| REQUEST | 7 | |
-| RESPONSE | 8 | |
-|  | 9 | |
+| PING | 4 | ping |
+| PONG | 5 | ping响应 |
+| REQUEST | 6 | 请求 |
+| RESPONSE | 7 | 响应 |
+| STREAM | 8 | 数据流 |
+| STREAM_END | 9 | 数据流结束 |
 |  | 10 | |
 |  | 11 | |
 |  | 12 | |
@@ -40,7 +42,7 @@
 | DISCONNECT | 15 | 断开连接 |
 
 
-###
+## 交互说明
 
 
 
