@@ -50,7 +50,7 @@
 | JSON | 1 | |
 | YAML | 2 | |
 | XML | 3 | |
-| CSV | 4 | |
+| CSV | 4 | 适用于列表形式的数据 |
 | Protobuf | 5 |  |
 | MessagePack | 6 |  |
 | Reserved | 7 | 保留 |
@@ -58,7 +58,71 @@
 
 ## 交互说明
 
+
+
+### CONNECT 连接
+
+首次连接
+
+```javascript
+{
+  client_id: "123123123123", //客户端ID，可选
+  username: "user", //用户名
+  password: "123456", //密码
+}
+```
+
+再次连接
+```javascript
+{
+  client_id: "123123123123", //客户端ID
+  token: "xyzxyzxyzxyz", //登录证书
+}
+```
+
+### CONNACK 连接响应
+
+```javascript
+{
+  client_id: "123123123123", //客户端ID
+  return: "ok/fail", //结果
+  reason: "密码错误", //错误原因
+  token: "abcabcabcabc", //登录证书
+}
+```
+
+### HEARTBEAT 心跳
+无内容
+
+### STREAM 数据流
+
 流ID，客户端发起用奇数，服务端发起用偶数
+
+内容为二进制
+
+### REQUEST 请求
+
+```javascript
+{
+  module: "fs", //模块
+  command: "create", //命令
+  data: {}, //数据
+}
+```
+
+### RESPONSE 响应
+```javascript
+{
+  //自定义数据响应
+}
+```
+
+### DISCONNECT 关闭连接
+```javascript
+{
+  reason: "restart", //关闭原因
+}
+```
 
 
 ## 协议支持
