@@ -72,13 +72,15 @@
 {
   "result": "ok",  //结果
   "data": {
+    "modules": ["fs", "channel", "product", "device", "camera", "ota"],
     "os": "linux",
-    "platform": "alpine 3.12",
+    "platform": "ubuntu 22.04",
     "kernel": "5.10.1",
     "boot": 1224212, //启动时间
     "cpu": {
       "cores": 4,
       "usage": 71,
+      "mhz": 3000,
       "model": "intel i5 4100"
     },
     "memory": {
@@ -86,7 +88,31 @@
       "free": 3900333,
       "used": 20230032,
       "usage": 50,
-    }
+    },
+    "net":[
+      {
+        "name": "eth0", //连接名称
+        "mac": "0d:0c:00:0d:0c:00", //mac地址
+        "flags": ["up", "loopback"],
+        "address": [ //ip地址表
+          "192.168.0.12",
+          "9d23:234234...",
+        ],
+        "tx":420112, //发送的数据
+        "rx":62001, //接收的数据
+      }
+    ],
+    "disk": [
+      {
+        "name": "/sd0",
+        "mount": "/usr/local",
+        "type": "fat32",
+        "total": 1300000,
+        "used": 100232,
+        "free": 1200030,
+        "usage": 50,
+      }
+    ]
   }
 }
 ```
