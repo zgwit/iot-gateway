@@ -16,7 +16,7 @@ var ErrNotEnough = errors.New("长度不足")
 type Encoder func(any) ([]byte, error)
 type Decoder func([]byte, any) error
 
-const MAGIC = "rgc"
+const MAGIC = "rpc"
 
 const (
 	DISCONNECT uint8 = iota
