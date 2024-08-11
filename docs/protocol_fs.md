@@ -124,33 +124,8 @@
 ```
 
 
-##  7、查看磁盘列表
-```json5
-{
-  "module": "fs",
-  "command": "disk",
-}
-```
 
-响应
-
-```json5
-{
-  "result": "ok/fail",  //结果
-  "reason": "",  //错误原因
-  "data": [
-    {
-      "disk": "/sd0",
-      "total": 1300000,
-      "used": 100232,
-      "free": 1200030,
-    }
-  ]
-}
-```
-
-
-##  8、格式化
+##  7、格式化
 ```json5
 {
   "module": "fs",

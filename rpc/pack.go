@@ -68,6 +68,33 @@ func RegisterEncoding(typ uint8, encoder Encoder, decoder Decoder) {
 	decoders[typ] = decoder
 }
 
+type Connect struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type ConnectAgain struct {
+	Id    string `json:"id"`
+	Token string `json:"token"`
+}
+
+type ConnectAck struct {
+	Id    string `json:"id"`
+	Token string `json:"token"`
+}
+
+type Request[T any] struct {
+	Module  string `json:"module"`
+	Command string `json:"command"`
+	Data    T      `json:"data,omitempty"`
+}
+
+type Response[T any] struct {
+	Result string `json:"result"`
+	Reason string `json:"reason,omitempty"`
+	Data   T      `json:"data,omitempty"`
+}
+
 type Pack struct {
 	Type     uint8
 	Encoding uint8

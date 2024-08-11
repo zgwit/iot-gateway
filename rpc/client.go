@@ -9,6 +9,8 @@ import (
 	"net/url"
 )
 
+const CLIENT_BUFFER_SIZE = 1024
+
 type Client struct {
 	Url string
 
@@ -17,6 +19,10 @@ type Client struct {
 	id       uint16
 	conn     net.Conn
 	requests map[uint16]any
+
+	inHeader  [8]byte
+	outHeader [8]byte
+	buffer    [CLIENT_BUFFER_SIZE]byte
 }
 
 func (c *Client) Write(pack *Pack) error {
@@ -54,7 +60,13 @@ func (c *Client) receive() {
 
 		l := int(binary.BigEndian.Uint16(buf[6:])) //长度
 		if l > 0 {
-			b := make([]byte, l)
+			var b []byte
+			if l > CLIENT_BUFFER_SIZE {
+				b = make([]byte, l)
+			} else {
+				b = c.buffer[:] //使用默认buffer
+			}
+
 			//_ = c.conn.SetReadDeadline(time.Now().Add(time.Second * 30))
 			n, err = io.ReadAtLeast(c.conn, b, l)
 			if err != nil {
