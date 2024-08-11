@@ -34,11 +34,19 @@ type FsUploadResponse FsStream
 
 type FsDeleteRequest FsPath
 
+type FsDeleteResponse struct{}
+
 type FsMoveRequest FsPathMove
 
+type FsMoveResponse struct{}
+
 type FsMakeDirectoryRequest FsPath
+
+type FsMakeDirectoryResponse struct{}
 
 type FsFormatRequest struct {
 	Disk string `json:"disk"`
 	Type string `json:"type"`
 }
+
+type FsFormatResponse struct{}
