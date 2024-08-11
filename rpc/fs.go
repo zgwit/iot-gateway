@@ -16,21 +16,17 @@ type FsItem struct {
 	Time int64  `json:"time,omitempty"`
 }
 
-type FsStream struct {
-	Stream uint16 `json:"stream"`
-}
-
 type FsSearchRequest FsPath
 
 type FsSearchResponse []FsItem
 
 type FsDownloadRequest FsPath
 
-type FsDownloadResponse FsStream
+type FsDownloadResponse StreamId
 
 type FsUploadRequest FsPath
 
-type FsUploadResponse FsStream
+type FsUploadResponse StreamId
 
 type FsDeleteRequest FsPath
 

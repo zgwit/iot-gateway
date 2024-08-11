@@ -10,21 +10,17 @@ type ProductItem struct {
 	Version string `json:"version"`
 }
 
-type ProductStream struct {
-	Stream uint16 `json:"stream"`
-}
-
 type ProductListRequest struct{}
 
 type ProductListResponse []ProductItem
 
 type ProductDownloadRequest ProductId
 
-type ProductDownloadResponse ProductStream
+type ProductDownloadResponse StreamId
 
 type ProductUploadRequest ProductId
 
-type ProductUploadResponse ProductStream
+type ProductUploadResponse StreamId
 
 type ProductDeleteRequest ProductId
 
