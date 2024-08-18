@@ -1,5 +1,16 @@
 package rpc
 
+const (
+	FS_LIST uint8 = iota
+	FS_STATE
+	FS_DOWNLOAD
+	FS_UPLOAD
+	FS_REMOVE
+	FS_MOVE
+	FS_MKDIR
+	FS_FORMAT
+)
+
 type FsPath struct {
 	Path string `json:"path"`
 }

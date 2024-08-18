@@ -1,5 +1,14 @@
 package rpc
 
+const (
+	TCP_LIST uint8 = iota
+	TCP_CREATE
+	TCP_DELETE
+	TCP_RESTART
+	TCP_WATCH
+	TCP_PIPE
+)
+
 type TcpId struct {
 	Id string `json:"id"`
 }

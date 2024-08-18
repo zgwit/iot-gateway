@@ -1,5 +1,12 @@
 package rpc
 
+const (
+	PRODUCT_LIST uint8 = iota
+	PRODUCT_DOWNLOAD
+	PRODUCT_UPLOAD
+	PRODUCT_DELETE
+)
+
 type ProductId struct {
 	Id string `json:"id"`
 }

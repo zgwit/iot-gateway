@@ -1,5 +1,13 @@
 package rpc
 
+const (
+	SERIAL_LIST uint8 = iota
+	SERIAL_OPEN
+	SERIAL_CLOSE
+	SERIAL_WATCH
+	SERIAL_PIPE
+)
+
 type SerialId struct {
 	Id string `json:"id"`
 }

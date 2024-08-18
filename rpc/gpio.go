@@ -1,5 +1,12 @@
 package rpc
 
+const (
+	GPIO_LIST uint8 = iota
+	GPIO_WRITE
+	GPIO_READ
+	GPIO_STATUS
+)
+
 type GpioPath struct {
 	Path string `json:"path"`
 }

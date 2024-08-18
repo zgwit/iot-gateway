@@ -1,5 +1,12 @@
 package rpc
 
+const (
+	GATEWAY_STATUS uint8 = iota
+	GATEWAY_EVENT
+	GATEWAY_SETTING
+	GATEWAY_METRICS
+)
+
 type GatewayStatusRequest struct {
 	Battery int `json:"battery,omitempty"`
 	Rssi    int `json:"rssi,omitempty"`
