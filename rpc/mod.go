@@ -1,0 +1,14 @@
+package rpc
+
+const (
+	MOD_GATEWAY uint8 = iota
+	MOD_PRODUCT
+	MOD_DEVICE
+	MOD_OTA
+	MOD_SERIAL
+	MOD_TCP
+	MOD_GPIO
+	MOD_FS
+	MOD_CAMERA
+	MOD_GPS
+)

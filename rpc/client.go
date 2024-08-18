@@ -9,6 +9,7 @@ import (
 	"net/url"
 )
 
+const HEADER_SIZE = 8
 const CLIENT_BUFFER_SIZE = 1024
 
 type Client struct {
@@ -20,9 +21,9 @@ type Client struct {
 	conn     net.Conn
 	requests map[uint16]any
 
-	inHeader  [8]byte
-	outHeader [8]byte
-	buffer    [CLIENT_BUFFER_SIZE]byte
+	inHeader  [HEADER_SIZE]byte
+	outHeader [HEADER_SIZE]byte
+	//buffer    [CLIENT_BUFFER_SIZE]byte
 }
 
 func (c *Client) Write(pack *Pack) error {
@@ -42,29 +43,32 @@ func (c *Client) Request(request any) (response any, err error) {
 }
 
 func (c *Client) receive() {
-	buf := make([]byte, 8)
+	//buf := make([]byte, 8)
+	buf := make([]byte, CLIENT_BUFFER_SIZE)
 	for {
-		//_ = c.conn.SetReadDeadline(time.Time{})
 		//n, err := c.conn.Read(buf)
-		n, err := io.ReadAtLeast(c.conn, buf, 8)
+		n, err := io.ReadAtLeast(c.conn, c.inHeader[:], HEADER_SIZE)
 		if err != nil {
 			break
 		}
-		if n < 8 {
+		if n < HEADER_SIZE {
 			break
 		}
 
-		if bytes.Compare(buf[:3], []byte(MAGIC)) != 0 {
+		if bytes.Compare(c.inHeader[:3], []byte(MAGIC)) != 0 {
 			break
 		}
 
-		l := int(binary.BigEndian.Uint16(buf[6:])) //长度
+		code := buf[3] >> 4
+		encoding := buf[3] & 0xf
+
+		l := int(binary.BigEndian.Uint16(c.inHeader[6:])) //长度
 		if l > 0 {
 			var b []byte
 			if l > CLIENT_BUFFER_SIZE {
 				b = make([]byte, l)
 			} else {
-				b = c.buffer[:] //使用默认buffer
+				b = buf
 			}
 
 			//_ = c.conn.SetReadDeadline(time.Now().Add(time.Second * 30))
@@ -73,13 +77,13 @@ func (c *Client) receive() {
 				break
 			}
 			if n != l {
-				//长度不够，费包
+				//长度不够，废包
 				break
 			}
-		}
 
-		tp := buf[3] >> 4
-		enc := buf[3] & 0xf
+			parse
+
+		}
 
 		var pack Pack
 		pack.Decode(b)
@@ -88,7 +92,6 @@ func (c *Client) receive() {
 
 	//关闭连接
 	_ = c.conn.Close()
-
 }
 
 func (c *Client) Open() error {

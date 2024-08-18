@@ -1,5 +1,16 @@
 package rpc
 
+const (
+	DEVICE_LIST uint8 = iota
+	DEVICE_CREATE
+	DEVICE_UPDATE
+	DEVICE_DELETE
+	DEVICE_READ
+	DEVICE_WRITE
+	DEVICE_EVENT
+	DEVICE_ACTION
+)
+
 type DeviceId struct {
 	Id string `json:"id"`
 }
